@@ -3,13 +3,13 @@ class Fighter(object):
                  name: str,
                  category: str,
                  height: float,
-                 nacionality: str,
+                 nationality: str,
                  n_wins: int,
                  n_loss: int):
         self.name = name
         self.category = category
         self.height = height
-        self.nacionality = nacionality
+        self.nationality = nationality
         self.n_wins = n_wins
         self.n_loss = n_loss
 
@@ -24,7 +24,7 @@ class Fighter(object):
                f' "name": "{self.name}", '\
                f' "category": "{self.category}", '\
                f' "height": {self.height}, '\
-               f' "nacionality": "{self.nacionality}", '\
+               f' "nationality": "{self.nationality}", '\
                f' "n_wins": {self.n_wins}, '\
                f' "n_loss": {self.n_loss} '\
                '}'

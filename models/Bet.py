@@ -9,6 +9,7 @@ class Bet(object):
         self.date = date
         self.winner = winner
         self.fight = fight
+        self.odd = None
 
         if id:
             self.id = id
