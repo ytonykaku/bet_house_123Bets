@@ -1,5 +1,6 @@
 from models import User, Wallet, Punter, Admin
 
+
 def callMenu():
     print('--- Bem vindo a Bet House APS ---')
     print(f'Lembre-se: apostas são apenas para entretenimento, seja consciente!')
@@ -35,7 +36,7 @@ def callLogin(login: str, password: str, usersList):
 
 def addUser(name: str, cpf: str,
                  login: str, password: str,
-                 permissions: int, usersList: list):
+                 permissions: int, punterList: list):
     for user in usersList:
         if user.cpf == cpf:
             print('Usuario ja cadastrado')
@@ -59,3 +60,7 @@ def addFighter(name: str,
         fighterList.append(Fighter(name, category, nationa))
         print('Lutador adicionado')
         return None
+
+
+def add_punter(self, wallet: Wallet) -> None:
+    self.wallet = wallet
