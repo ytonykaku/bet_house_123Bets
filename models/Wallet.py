@@ -3,10 +3,10 @@ class Wallet(object):
 
     def __init__(self,
                  value_available: float = 0.0, value_applied: float = 0.0,
-                 id: int = 0):
+                 pid: int = 0):
         self.value_available = value_available
         self.value_applied = value_applied
-        self.id = id
+        self.id = pid
 
     def __str__(self) -> str:
         return '{' \

@@ -1,7 +1,7 @@
 SELECT
 id, password
 FROM
-Punter
+User
 WHERE
 login = ?;
 

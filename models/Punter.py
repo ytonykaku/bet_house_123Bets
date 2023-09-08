@@ -6,12 +6,11 @@ class Punter(User):
                  name: str, cpf: str, wallet: Wallet,
                  login: str = "", password: str = "",
                  profit: float = 0.0, loss: float = 0.0,
-                 id: int = 0):
-        super().__init__(name, cpf, login, password, 0)
+                 uid: int = 0):
+        super().__init__(name, cpf, login, password, uid)
         self.profit = profit
         self.loss = loss
         self.wallet = wallet
-        self.id = id
 
     def add_profit(self, value: float) -> None:
         self.profit += value

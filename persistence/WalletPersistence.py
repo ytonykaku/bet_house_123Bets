@@ -12,13 +12,18 @@ class WalletPersistence:
         with open("sql/operations/wallet/insert.sql") as f:
             self.queries["insert"] = f.read()
 
-        with open("sql/operations/wallet/delete-by-id.sql") as f:
-            self.queries["delete-by-id"] = f.read()
+        with open("sql/operations/wallet/deposit.sql") as f:
+            self.queries["deposit"] = f.read()
+
+        with open("sql/operations/wallet/withdraw.sql") as f:
+            self.queries["withdraw"] = f.read()
 
     def insert(self, w: Wallet):
-        self.db_cursor.execute(self.queries["insert"])
-        w.id = self.db_cursor.lastrowid
+        self.db_cursor.execute(self.queries["insert"], (w.id,))
 
-    def delete(self, w: Wallet):
-        self.db_cursor.execute(self.queries["delete-by-id"], (w.id, ))
+    def deposit(self, w: Wallet, value: float):
+        self.db_cursor.execute(self.queries["deposit"], (value, w.id))
+
+    def withdraw(self, w: Wallet, value: float):
+        self.db_cursor.execute(self.queries["withdraw"], (value, w.id))
 

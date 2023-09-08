@@ -6,13 +6,13 @@ class User(object):
     def __init__(self,
                  name: str, cpf: str,
                  login: str, password: str,
-                 permissions: int):
-        # TODO: Perform checking.
+                 permissions: int, id: int = 0):
         self.name = name
         self.login = login
         self.password = password
         self.permissions = permissions
         self.cpf = cpf
+        self.id = id
 
     def __str__(self) -> str:
         return '{' \

@@ -1,2 +1,2 @@
-INSERT INTO Punter (uid)
+INSERT INTO Admin (uid)
             VALUES (  ?);

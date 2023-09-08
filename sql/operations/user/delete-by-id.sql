@@ -1,5 +1,4 @@
 DELETE FROM
-Wallet
+User
 WHERE
-id == ?;
-
+id = ?;
