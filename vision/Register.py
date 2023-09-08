@@ -1,6 +1,7 @@
 import customtkinter
 from CTkMessagebox import CTkMessagebox
 import Fontes.Fonts as Fonts
+import Validation as v
 
 class Register:
     def __init__(self):
@@ -44,6 +45,26 @@ class Register:
         username = self.usernameEntry.get()
         senha = self.passwordEntry.get()
         
+        try:
+            v.validarVazio(self.nomeEntry.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = "Nome " + str(e), icon = "cancel")
+
+        try:
+            v.validarCpf(self.cpfEntry.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = "CPF " + str(e), icon = "cancel")
+
+        try:
+            v.validarVazio(self.usernameEntry.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = "Username " + str(e), icon = "cancel")
+        
+        try:
+            v.validarVazio(self.passwordEntry.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = "Password " + str(e), icon = "cancel")
+
         print(name, cpf, username, senha)
         #cria usario aqui e de acordo com o retorno escolhe a mensagem
         #CTkMessagebox(message="Usuario criado com sucesso!", icon="check", option_1="OK")
@@ -52,5 +73,5 @@ class Register:
     def voltarPress(self):
         self.register.destroy()
 
-def visionRegister():
+if __name__ == '__main__':    
     Register()

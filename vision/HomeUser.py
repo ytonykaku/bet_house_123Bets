@@ -4,9 +4,9 @@ import tkinter as tk
 import Fontes.Fonts as Fonts
 from PIL import Image
 from CTkMessagebox import CTkMessagebox
+import Validation as v
 
-
-class Home:
+class HomeUser:
     def __init__(self, user):
         imageUser = customtkinter.CTkImage(Image.open("Imagens/user.png"), size = (28,28))
         imageSaldo = customtkinter.CTkImage(Image.open("Imagens/saldo.png"), size = (28,28))
@@ -101,17 +101,22 @@ class Home:
         homepage.mainloop()
     
     def depositoPress(self):
-        #adicionar saldo na conta
-        CTkMessagebox(message = "Depósito feito com sucesso!", icon = "check", option_1 = "OK")
+        try:
+            v.validarValor(self.value.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = e, icon = "cancel")        
+        
         print(self.value.get())
     
     def saquePress(self):
-        #verificar se tem saldo na conta
-        #se houver saldo retirar e dar mensagem ok caso contrario dar mensagem de erro
-        #CTkMessagebox(title = "Error", message = "Saldo insuficiente!", icon = "cancel")
-        CTkMessagebox(message = "Saque feito com sucesso!", icon = "check", option_1 = "OK")
+        try:
+            v.validarValor(self.value.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = e, icon = "cancel")
+        
+        #CTkMessagebox(message = "Saque feito com sucesso!", icon = "check", option_1 = "OK")
         print(self.value.get())
 
 if __name__ == '__main__':    
-    Home("matheus")
+    HomeUser("matheus")
     

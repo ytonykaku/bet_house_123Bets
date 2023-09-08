@@ -4,6 +4,7 @@ from CTkMessagebox import CTkMessagebox
 import Register
 import Fontes.Fonts as Fonts
 from CTkMessagebox import CTkMessagebox
+import Validation as v
 
 class Login:
     def __init__(self, login):
@@ -34,9 +35,15 @@ class Login:
         login.mainloop()
 
     def loginPress(self):
-        login = self.username.get()
-        password = self.password.get()
-        print(login, password)
+        try:
+            v.validarVazio(self.username.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = "Username " + str(e), icon = "cancel")
+        
+        try:
+            v.validarVazio(self.password.get())
+        except ValueError as e:
+            CTkMessagebox(title = "Error", message = "Senha " + str(e), icon = "cancel")
 
         #verificar login com controle se ok entao pegar user e chamar home caso contrario mensagem de erro
         #CTkMessagebox(title="Error", message="Acesso inválido", icon="cancel")
