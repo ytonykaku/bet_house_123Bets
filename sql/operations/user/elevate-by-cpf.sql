@@ -11,6 +11,6 @@ INSERT INTO Admin(uid)
 DELETE FROM
 Punter
 WHERE
-uid = (SELECT id
-       FROM User
-       WHERE cpf = {cpf});
+    uid = (SELECT id
+           FROM User
+           WHERE cpf = {cpf});

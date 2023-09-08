@@ -21,6 +21,9 @@ class UserPersistence:
         with open("sql/operations/user/elevate-by-cpf.sql") as f:
             self.queries["elevate-by-cpf"] = f.read()
 
+        with open("sql/operations/user/depress-by-cpf.sql") as f:
+            self.queries["depress-by-cpf"] = f.read()
+
         with open("sql/operations/user/update.sql") as f:
             self.queries["update"] = f.read()
 
@@ -49,11 +52,13 @@ class UserPersistence:
             self.queries["elevate-by-cpf"].format(cpf=cpf),
         )
 
+    def depress_by_cpf(self, cpf: str):
+        self.db_cursor.executescript(
+            self.queries["depress-by-cpf"].format(cpf=cpf),
+        )
+
     def update(self, u: User, new_values: dict):
         assignments_as_list = [ f"{k} = {v}" for k, v in new_values.items() ]
         assignments_as_str = ", ".join(assignments_as_list)
-        print(assignments_as_str)
-        print(self.queries["update"].format(assignments=assignments_as_str))
         self.db_cursor.execute(self.queries["update"].format(assignments=assignments_as_str), (u.id,))
-
 

@@ -106,5 +106,7 @@ user_persistence.elevate_by_cpf(cpf="12345678910")
 
 user_persistence.update(a, new_values={"cpf": '"12345678931"', "name": '"Henrique Hott"'})
 
+user_persistence.depress_by_cpf(cpf="12345678931")
+
 conn.commit()
 
