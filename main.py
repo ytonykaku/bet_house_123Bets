@@ -1,88 +1,66 @@
-import datetime as dt
-from models.Operations import addUser
-from models.Operations import callMenu
-from models.Operations import callLogin
-from models.Operations import callUserMenu
+import sqlite3 as sql3
+
+from models.Punter import Punter
+from models.Wallet import Wallet
+
+from persistence.WalletPersistence import WalletPersistence
+from persistence.PunterPersistence import PunterPersistence
+
+def create_db(db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor]:
+    connection = sql3.connect(db_name)
+    connection.execute("PRAGMA foreign_keys = ON;")
+
+    cursor = connection.cursor()
 
 
-from models import *
+    with open("sql/tables/admin.sql") as f:
+        cursor.execute(f.read())
 
-adm = Admin(name="Henrique", cpf="12345678910",
-            login="hott-henrique", password="password")
+    with open("sql/tables/punter.sql") as f:
+        cursor.execute(f.read())
 
-p = Punter(name="Henrique", cpf="12345678910",
-           login="hott-henrique", password="password",
-           profit=0.0, loss=0.0)
+    with open("sql/tables/wallet.sql") as f:
+        cursor.execute(f.read())
 
-w = Wallet(value_available=250.0, value_applied=0.0, owner=p)
+    return connection, cursor
 
-p.set_wallet(w)
+conn, cursor = create_db()
 
-fA = Fighter(name="Dumb M. F.",
-             category="lightweight",
-             height=1.50,
-             nationality="USA",
-             n_wins=0, n_loss=0)
+punter_persistence = PunterPersistence(cursor=cursor)
+wallet_persistence = WalletPersistence(cursor=cursor)
 
-fB = Fighter(name="Windersson Nunes",
-             category="lightweight",
-             height=1.78,
-             nationality="BR",
-             n_wins=0, n_loss=0)
+new_users = [
+    ("Lucas1",  "12345678910", "lucao",   "senha-forte1"),
+    ("Lucas2",  "12345678911", "lucao0",  "senha-forte2"),
+    ("Lucas3",  "12345678912", "lucao1",  "senha-forte3"),
+    ("Lucas4",  "12345678913", "lucao2",  "senha-forte4"),
+    ("Lucas5",  "12345678914", "lucao3",  "senha-forte5"),
+    ("Lucas6",  "12345678915", "lucao4",  "senha-forte6"),
+    ("Lucas7",  "12345678916", "lucao5",  "senha-forte7"),
+    ("Lucas8",  "12345678917", "lucao6",  "senha-forte8"),
+    ("Lucas9",  "12345678918", "lucao7",  "senha-forte9"),
+    ("Lucas10", "12345678919", "lucao8",  "senha-forte10"),
+    ("Lucas11", "12345678920", "lucao9",  "senha-forte11"),
+    ("Lucas12", "12345678921", "lucao10", "senha-forte12"),
+    ("Lucas13", "12345678922", "lucao11", "senha-forte13"),
+    ("Lucas14", "12345678923", "lucao12", "senha-forte14"),
+    ("Lucas15", "12345678924", "lucao13", "senha-forte15"),
+    ("Lucas16", "12345678925", "lucao14", "senha-forte16"),
+    ("Lucas17", "12345678926", "lucao15", "senha-forte17"),
+    ("Lucas18", "12345678927", "lucao16", "senha-forte18"),
+    ("Lucas19", "12345678928", "lucao17", "senha-forte19"),
+    ("Lucas20", "12345678929", "lucao18", "senha-forte20"),
+]
 
-f = Fight(date=dt.datetime.now().timestamp(),
-          fA=fA, oddA=0.0,
-          fB=fB, oddB=1.0)
+for name, cpf, login, password in new_users:
+    w = Wallet()
+    wallet_persistence.insert(w)
+    p = Punter(name=name, cpf=cpf, login=login, password=password, wallet=w)
+    punter_persistence.insert(p)
 
-b = Bet(value=100.0, date=dt.datetime.now().timestamp(), wallet=w, winner='B', fight=f)
+id, password = punter_persistence.get_auth_info(login="lucao18")
 
-w.add_investment(b)
+print(punter_persistence.get_by_id(id=id))
 
-f.add_bet(b)
+conn.commit()
 
-print(f"Punter: {p}")
-print(f"Wallet: {w}")
-print(f"Bet: {b}")
-print(f"Fighter A: {fA}")
-print(f"Fighter B: {fB}")
-print(f"Fight: {f}")
-
-f.set_winner('A')
-
-print("---------x----------")
-
-print(f"Punter: {p}")
-print(f"Wallet: {w}")
-print(f"Bet: {b}")
-print(f"Fighter A: {fA}")
-print(f"Fighter B: {fB}")
-print(f"Fight: {f}")
-
-# implementando o menu
-
-usersList = []
-action = 1
-counter = 0
-while(1):
-    if counter <= 1:
-        callMenu()
-    action = input()
-    counter += 1
-    if action == '1':
-        print(f'Digite o seu nome')
-        name = input()
-        print(f'Digite o seu CPF')
-        cpf = input()
-        print(f'Digite o seu login')
-        login = input()
-        print(f'Digite a sua senha')
-        password = input()
-        addUser(name, cpf, login, password, '0', usersList)
-    elif action == '2':
-        print(f'Digite o seu login')
-        login = input()
-        print(f'Digite sua senha')
-        password = input()
-        didLogin = callLogin(login, password, usersList)
-        if didLogin == True:
-            callUserMenu(usersList, login)

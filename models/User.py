@@ -1,4 +1,4 @@
-import argon2 as a2
+# import argon2 as a2
 # Queria adicionar hash nas senhas mas vou focar em coisas mais importantes antes de mexer nisso
 
 class User(object):

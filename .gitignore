@@ -12,5 +12,5 @@ venv.bak/
 
 # Data
 .data/
-sqlite3
+db.sqlite3
 
