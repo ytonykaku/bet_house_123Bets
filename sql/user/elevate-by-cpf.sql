@@ -5,7 +5,7 @@ utype = 1
 WHERE
 cpf = {cpf};
 
-INSERT INTO Admin(uid)
+INSERT OR IGNORE INTO Admin(uid)
             SELECT id FROM User WHERE cpf = {cpf};
 
 DELETE FROM

@@ -23,17 +23,9 @@ def create_db(db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor
 
     cursor = connection.cursor()
 
-    with open("sql/user/table.sql") as f:
-        cursor.execute(f.read())
-
-    with open("sql/admin/table.sql") as f:
-        cursor.execute(f.read())
-
-    with open("sql/punter/table.sql") as f:
-        cursor.execute(f.read())
-
-    with open("sql/wallet/table.sql") as f:
-        cursor.execute(f.read())
+    for model in [ "user", "admin", "punter", "wallet" ]:
+        with open(f"sql/{model}/table.sql") as f:
+            cursor.execute(f.read())
 
     return connection, cursor
 
@@ -86,7 +78,7 @@ for name, cpf, login, password, email in new_users:
 
 for i in range(5):
     print(*user_persistence.get_page(page_num=i + 1, num_items=5), sep='\n')
-    print(('-' * 20) + 'x' + ('-' * 20))
+    print(('-' * 40) + 'x' + ('-' * 40))
 
 conn.commit()
 

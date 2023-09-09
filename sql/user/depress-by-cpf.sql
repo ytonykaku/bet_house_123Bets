@@ -5,10 +5,10 @@ utype = 0
 WHERE
 cpf = {cpf};
 
-INSERT INTO Punter(uid)
+INSERT OR IGNORE INTO Punter(uid)
             SELECT id FROM User WHERE cpf = {cpf};
 
-INSERT INTO Wallet(pid)
+INSERT OR IGNORE INTO Wallet(pid)
             SELECT id FROM User WHERE cpf = {cpf};
 
 DELETE FROM
