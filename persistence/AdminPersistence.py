@@ -11,7 +11,7 @@ class AdminPersistence:
 
         self.queries = utils.create_operations_dict(
             operations=[ "insert" ],
-            SQL_BASE_PATH="sql/punter/"
+            SQL_BASE_PATH="sql/admin/"
         )
 
     def insert(self, a : Admin):

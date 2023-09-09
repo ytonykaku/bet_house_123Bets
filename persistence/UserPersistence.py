@@ -16,7 +16,8 @@ class UserPersistence:
                          "elevate-by-cpf",
                          "depress-by-cpf",
                          "select-page",
-                         "update" ],
+                         "update",
+                         "select-page-filtered-by-utype" ],
             SQL_BASE_PATH="sql/user/"
         )
 
@@ -57,6 +58,24 @@ class UserPersistence:
         """
         user_data: list[tuple[str, str, str, str, int]] = self.db_cursor.execute(
             self.queries["select-page"], { "page_num": page_num, "num_items": num_items }
+        ).fetchall()
+
+        return [
+            User(name=name, login=login, cpf=cpf, email=email, permissions=permissions)
+            for
+            name, login, cpf, email, permissions
+            in
+            user_data
+         ]
+
+    def get_page_filtered_by_utype(self, page_num: int, utype: int, num_items: int = 10):
+        """
+        :param page_num: Page to query, starting from one.
+        :param num_items: Amount of items to query in a single page.
+        """
+        user_data: list[tuple[str, str, str, str, int]] = self.db_cursor.execute(
+            self.queries["select-page-filtered-by-utype"],
+            { "page_num": page_num, "num_items": num_items, "selected_utype": utype }
         ).fetchall()
 
         return [

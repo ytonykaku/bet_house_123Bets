@@ -36,49 +36,54 @@ punter_persistence = PunterPersistence(cursor=cursor)
 wallet_persistence = WalletPersistence(cursor=cursor)
 admin_persistence  = AdminPersistence(cursor=cursor)
 
-new_users = [
-    ("Lucas",   "12345678910", "lucao",   "senha-forte",   "email@example.com" ),
-    ("Lucas0",  "12345678911", "lucao0",  "senha-forte0",  "email0@example.com" ),
-    ("Lucas1",  "12345678912", "lucao1",  "senha-forte1",  "email1@example.com" ),
-    ("Lucas2",  "12345678913", "lucao2",  "senha-forte2",  "email2@example.com" ),
-    ("Lucas3",  "12345678914", "lucao3",  "senha-forte3",  "email3@example.com" ),
-    ("Lucas4",  "12345678915", "lucao4",  "senha-forte4",  "email4@example.com" ),
-    ("Lucas5",  "12345678916", "lucao5",  "senha-forte5",  "email5@example.com" ),
-    ("Lucas6",  "12345678917", "lucao6",  "senha-forte6",  "email6@example.com" ),
-    ("Lucas7",  "12345678918", "lucao7",  "senha-forte7",  "email7@example.com" ),
-    ("Lucas8",  "12345678919", "lucao8",  "senha-forte8",  "email8@example.com" ),
-    ("Lucas9",  "12345678920", "lucao9",  "senha-forte9",  "email9@example.com" ),
-    ("Lucas10", "12345678921", "lucao10", "senha-forte10", "email10@example.com" ),
-    ("Lucas11", "12345678922", "lucao11", "senha-forte11", "email11@example.com" ),
-    ("Lucas12", "12345678923", "lucao12", "senha-forte12", "email12@example.com" ),
-    ("Lucas13", "12345678924", "lucao13", "senha-forte13", "email13@example.com" ),
-    ("Lucas14", "12345678925", "lucao14", "senha-forte14", "email14@example.com" ),
-    ("Lucas15", "12345678926", "lucao15", "senha-forte15", "email15@example.com" ),
-    ("Lucas16", "12345678927", "lucao16", "senha-forte16", "email16@example.com" ),
-    ("Lucas17", "12345678928", "lucao17", "senha-forte17", "email17@example.com" ),
-    ("Lucas18", "12345678929", "lucao18", "senha-forte18", "email18@example.com" ),
-]
-
 a = Admin(name="Admin", cpf="00000000000", login="admin", password="admin", email="admin@example.com")
 
 user_persistence.insert(a)
 admin_persistence.insert(a)
 
-for name, cpf, login, password, email in new_users:
+new_users = [
+    ("Lucas01", "12345678901", "lucao01", "senha-forte", "email01@example.com" ),
+    ("Lucas02", "12345678902", "lucao02", "senha-forte", "email02@example.com" ),
+    ("Lucas03", "12345678903", "lucao03", "senha-forte", "email03@example.com" ),
+    ("Lucas04", "12345678904", "lucao04", "senha-forte", "email04@example.com" ),
+    ("Lucas05", "12345678905", "lucao05", "senha-forte", "email05@example.com" ),
+    ("Lucas06", "12345678906", "lucao06", "senha-forte", "email06@example.com" ),
+    ("Lucas07", "12345678907", "lucao07", "senha-forte", "email07@example.com" ),
+    ("Lucas08", "12345678908", "lucao08", "senha-forte", "email08@example.com" ),
+    ("Lucas09", "12345678909", "lucao09", "senha-forte", "email09@example.com" ),
+    ("Lucas10", "12345678910", "lucao10", "senha-forte", "email10@example.com" ),
+    ("Lucas11", "12345678911", "lucao11", "senha-forte", "email11@example.com" ),
+    ("Lucas12", "12345678912", "lucao12", "senha-forte", "email12@example.com" ),
+    ("Lucas13", "12345678913", "lucao13", "senha-forte", "email13@example.com" ),
+    ("Lucas14", "12345678914", "lucao14", "senha-forte", "email14@example.com" ),
+    ("Lucas15", "12345678915", "lucao15", "senha-forte", "email15@example.com" ),
+    ("Lucas16", "12345678916", "lucao16", "senha-forte", "email16@example.com" ),
+    ("Lucas17", "12345678917", "lucao17", "senha-forte", "email17@example.com" ),
+    ("Lucas18", "12345678918", "lucao18", "senha-forte", "email18@example.com" ),
+    ("Lucas19", "12345678919", "lucao19", "senha-forte", "email19@example.com" ),
+    ("Lucas20", "12345678920", "lucao20", "senha-forte", "email20@example.com" ),
+]
+
+for idx, (name, cpf, login, password, email) in enumerate(new_users):
     w = Wallet()
-
     p = Punter(name=name, cpf=cpf, login=login, password=password, email=email, wallet=w)
+
     user_persistence.insert(p)
-
     punter_persistence.insert(p)
-
     wallet_persistence.insert(w)
 
-    wallet_persistence.deposit(w, 100)
+    if True and (idx + 1) % 2 == 0:
+        user_persistence.elevate_by_cpf(cpf=cpf)
 
-for i in range(5):
-    print(*user_persistence.get_page(page_num=i + 1, num_items=5), sep='\n')
-    print(('-' * 40) + 'x' + ('-' * 40))
+print("Punters")
+for i in range(3):
+    print(*user_persistence.get_page_filtered_by_utype(page_num=i + 1, utype=0, num_items=3), sep='\n')
+    print(('-' * 50) + 'x' + ('-' * 50))
+
+print("Admins")
+for i in range(3):
+    print(*user_persistence.get_page_filtered_by_utype(page_num=i + 1, utype=1, num_items=3), sep='\n')
+    print(('-' * 50) + 'x' + ('-' * 50))
 
 conn.commit()
 
