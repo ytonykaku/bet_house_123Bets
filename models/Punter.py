@@ -3,11 +3,14 @@ from models import User, Wallet
 class Punter(User):
 
     def __init__(self,
-                 name: str, cpf: str, wallet: Wallet,
+                 name: str, cpf: str, email: str,
+                 wallet: Wallet,
                  login: str = "", password: str = "",
                  profit: float = 0.0, loss: float = 0.0,
                  uid: int = 0):
-        super().__init__(name, cpf, login, password, uid)
+        super().__init__(name=name, cpf=cpf, email=email,
+                         login=login, password=password,
+                         id=uid)
         self.profit = profit
         self.loss = loss
         self.wallet = wallet

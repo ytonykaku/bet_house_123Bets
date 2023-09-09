@@ -3,7 +3,10 @@ from models import User
 class Admin(User):
 
     def __init__(self,
-                 name: str, cpf: str,
-                 login: str, password: str):
-        super().__init__(name, cpf, login, password, 1)
+                 name: str, cpf: str, email:str,
+                 login: str, password: str,
+                 uid: int = 0):
+        super().__init__(name=name, cpf=cpf, email=email,
+                         login=login, password=password,
+                         id=uid, permissions=1)
 

@@ -4,22 +4,23 @@
 class User(object):
 
     def __init__(self,
-                 name: str, cpf: str,
-                 login: str, password: str,
-                 permissions: int, id: int = 0):
+                 name: str, cpf: str, email: str,
+                 login: str, password: str = "",
+                 permissions: int = 0, id: int = 0):
+        self.id = id
         self.name = name
+        self.cpf = cpf
+        self.email = email
         self.login = login
         self.password = password
         self.permissions = permissions
-        self.cpf = cpf
-        self.id = id
 
     def __str__(self) -> str:
         return '{' \
                f' "name": "{self.name}", '\
                f' "cpf": "{self.cpf}", '\
                f' "login": "{self.login}", '\
-               f' "password": "{self.password}" '\
+               f' "email": "{self.email}" '\
                '}'
 
     def __repr__(self) -> str:
