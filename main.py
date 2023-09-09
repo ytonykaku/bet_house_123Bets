@@ -11,21 +11,6 @@ from persistence.WalletPersistence import WalletPersistence
 
 """
 # Primeiro Entrega:
-- User
-    - Insert (On Register) OK
-    - Delete (By ID, Admin(Everyone) or User(When logged in)) OK
-    - Update OK
-    - Get Page (List users) OK
-- Admin
-    - Insert OK
-- Punter
-    - Insert OK
-    - Elevate by cpf OK
-    - Depress by cpf OK
-- Wallet
-    - Insert OK
-    - Deposit OK
-    - Saque OK
 - Transaction
     - Insert
     - History
@@ -38,16 +23,16 @@ def create_db(db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor
 
     cursor = connection.cursor()
 
-    with open("sql/tables/user.sql") as f:
+    with open("sql/user/table.sql") as f:
         cursor.execute(f.read())
 
-    with open("sql/tables/admin.sql") as f:
+    with open("sql/admin/table.sql") as f:
         cursor.execute(f.read())
 
-    with open("sql/tables/punter.sql") as f:
+    with open("sql/punter/table.sql") as f:
         cursor.execute(f.read())
 
-    with open("sql/tables/wallet.sql") as f:
+    with open("sql/wallet/table.sql") as f:
         cursor.execute(f.read())
 
     return connection, cursor

@@ -1,34 +1,24 @@
 import sqlite3 as sql3
 
 from models.User import User
+from persistence import utils
 
 
 class UserPersistence:
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor
-        self.queries = dict()
 
-        with open("sql/operations/user/insert.sql") as f:
-            self.queries["insert"] = f.read()
-
-        with open("sql/operations/user/delete-by-id.sql") as f:
-            self.queries["delete-by-id"] = f.read()
-
-        with open("sql/operations/user/select-auth-info.sql") as f:
-            self.queries["select-auth-info"] = f.read()
-
-        with open("sql/operations/user/elevate-by-cpf.sql") as f:
-            self.queries["elevate-by-cpf"] = f.read()
-
-        with open("sql/operations/user/depress-by-cpf.sql") as f:
-            self.queries["depress-by-cpf"] = f.read()
-
-        with open("sql/operations/user/select-page.sql") as f:
-            self.queries["select-page"] = f.read()
-
-        with open("sql/operations/user/update.sql") as f:
-            self.queries["update"] = f.read()
+        self.queries = utils.create_operations_dict(
+            operations=[ "insert",
+                         "delete-by-id",
+                         "select-auth-info",
+                         "elevate-by-cpf",
+                         "depress-by-cpf",
+                         "select-page",
+                         "update" ],
+            SQL_BASE_PATH="sql/user/"
+        )
 
     def insert(self, u: User):
         self.db_cursor.execute(
