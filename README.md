@@ -16,3 +16,6 @@ Trabalho para a disciplina de APS UFSJ 2023/2
 
 
 ![image](https://github.com/ytonykaku/bet_house_123Bets/assets/91208015/88c60154-73da-448b-bc89-1e093b015669)
+
+
+![image](https://github.com/ytonykaku/bet_house_123Bets/assets/91208015/2ce2284d-5547-46af-b3ca-79db76f862a4)
