@@ -1,18 +1,22 @@
+import datetime as dt
 import sqlite3 as sql3
+import random
 
 from models.Admin import Admin
 from models.Punter import Punter
+from models.Transaction import Transaction
 from models.Wallet import Wallet
 
 from persistence.UserPersistence import UserPersistence
 from persistence.AdminPersistence import AdminPersistence
 from persistence.PunterPersistence import PunterPersistence
+from persistence.TransactionPersistence import TransactionPersistence
 from persistence.WalletPersistence import WalletPersistence
 
 """
 # Primeiro Entrega:
 - Transaction
-    - Insert
+    - Insert OK
     - History
 """
 
@@ -23,7 +27,7 @@ def create_db(db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor
 
     cursor = connection.cursor()
 
-    for model in [ "user", "admin", "punter", "wallet" ]:
+    for model in [ "user", "admin", "punter", "wallet", "transaction" ]:
         with open(f"sql/{model}/table.sql") as f:
             cursor.execute(f.read())
 
@@ -31,10 +35,11 @@ def create_db(db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor
 
 conn, cursor = create_db()
 
-user_persistence   = UserPersistence(cursor=cursor)
-punter_persistence = PunterPersistence(cursor=cursor)
-wallet_persistence = WalletPersistence(cursor=cursor)
-admin_persistence  = AdminPersistence(cursor=cursor)
+user_persistence        = UserPersistence(cursor=cursor)
+punter_persistence      = PunterPersistence(cursor=cursor)
+wallet_persistence      = WalletPersistence(cursor=cursor)
+admin_persistence       = AdminPersistence(cursor=cursor)
+transaction_persistence = TransactionPersistence(cursor=cursor)
 
 a = Admin(name="Admin", cpf="00000000000", login="admin", password="admin", email="admin@example.com")
 
@@ -64,6 +69,8 @@ new_users = [
     ("Lucas20", "12345678920", "lucao20", "senha-forte", "email20@example.com" ),
 ]
 
+punter_bkp: Punter
+
 for idx, (name, cpf, login, password, email) in enumerate(new_users):
     w = Wallet()
     p = Punter(name=name, cpf=cpf, login=login, password=password, email=email, wallet=w)
@@ -74,6 +81,13 @@ for idx, (name, cpf, login, password, email) in enumerate(new_users):
 
     if True and (idx + 1) % 2 == 0:
         user_persistence.elevate_by_cpf(cpf=cpf)
+    else:
+        for i in range(10):
+            punter_bkp = p
+            ttype = Transaction.DEPOSIT if random.random() > 0.5 else Transaction.WITHDRAW
+            t = Transaction(p=p, value=50, ttype=ttype, timestamp=dt.datetime.now().timestamp())
+            transaction_persistence.insert(t=t)
+
 
 print("Punters")
 for i in range(3):
@@ -83,6 +97,11 @@ for i in range(3):
 print("Admins")
 for i in range(3):
     print(*user_persistence.get_page_filtered_by_utype(page_num=i + 1, utype=1, num_items=3), sep='\n')
+    print(('-' * 50) + 'x' + ('-' * 50))
+
+print("Transactions")
+for i in range(3):
+    print(*transaction_persistence.select_page_order_by_timestamp(p=punter_bkp, page_num=i + 1, num_items=3), sep='\n')
     print(('-' * 50) + 'x' + ('-' * 50))
 
 conn.commit()

@@ -35,7 +35,7 @@ class UserPersistence:
             (id, )
         )
 
-    def get_auth_info(self, login: str):
+    def get_auth_info(self, login: str) -> tuple[int, str]:
         return self.db_cursor.execute(
             self.queries["select-auth-info"],
             (login, )

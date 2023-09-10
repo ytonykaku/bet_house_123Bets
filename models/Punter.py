@@ -15,12 +15,6 @@ class Punter(User):
         self.loss = loss
         self.wallet = wallet
 
-    def add_profit(self, value: float) -> None:
-        self.profit += value
-
-    def add_loss(self, value: float) -> None:
-        self.loss += value
-
     def __str__(self) -> str:
         return '{' \
                f' "name": "{self.name}", '\
