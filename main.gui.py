@@ -1,3 +1,5 @@
+#!/bin/env python3.11
+
 import sqlite3 as sql3
 
 import customtkinter as ctk
