@@ -23,7 +23,8 @@ from control.WalletController import WalletController
 from control.TransactionController import TransactionController
 
 
-class App():
+class App(object):
+
     def __init__(self):
         self.conn, cursor = self.create_db()
 
@@ -63,16 +64,16 @@ class App():
     def on_logout(self):
         self.user_view.activate_view(post_login_callback=self.post_login)
 
-    def main(self):
-        self.master.mainloop()
-        self.conn.commit()
-
     def create_db(self, db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor]:
         connection = sql3.connect(db_name)
 
         connection.execute("PRAGMA foreign_keys = ON;")
 
         return connection, connection.cursor()
+
+    def main(self):
+        self.master.mainloop()
+        self.conn.commit()
 
 def main():
     App().main()
