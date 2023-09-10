@@ -8,10 +8,16 @@ class UserController():
         self.persistence = persistence
 
     def authenticate(self, login: str, password: str) -> User | None:
-        id, truth_password = self.persistence.get_auth_info(login=login)
+        out = self.persistence.get_auth_info(login=login)
 
-        if password == truth_password:
-            return User("Test", "0x0", "example@email.com", login=login, id=id)
+        if out is None:
+            return None
 
-        return None
+        id, truth_password = out
+
+        if password != truth_password:
+            return None
+
+        return self.persistence.get_by_id(id=id)
+
 

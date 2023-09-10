@@ -12,7 +12,8 @@ class WalletPersistence:
         self.queries = utils.create_operations_dict(
             operations=[ "insert",
                          "deposit",
-                         "withdraw" ],
+                         "withdraw",
+                         "get-by-id" ],
             SQL_BASE_PATH="sql/wallet/"
         )
 
@@ -24,4 +25,12 @@ class WalletPersistence:
 
     def withdraw(self, w: Wallet, value: float):
         self.db_cursor.execute(self.queries["withdraw"], (value, w.id))
+
+    def get_by_id(self, id: int) -> Wallet:
+        data: tuple[float, float] = self.db_cursor.execute(self.queries["get-by-id"], (id, )) \
+                                                  .fetchone()
+
+        return Wallet(pid=id,
+                      value_available=data[0],
+                      value_applied=data[1])
 

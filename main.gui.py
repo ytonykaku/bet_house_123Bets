@@ -1,12 +1,14 @@
 import sqlite3 as sql3
-from typing import Any, Tuple, Union, Optional, Union
 
+import CTkMessagebox
 import customtkinter as ctk
-from CTkMessagebox import CTkMessagebox
-
-from vision.Fontes import Fonts
 
 from models.User import User
+from models.Admin import Admin
+from models.Punter import Punter
+
+from view.AdminView import AdminView
+from view.PunterView import PunterView
 
 from persistence.UserPersistence import UserPersistence
 from persistence.PunterPersistence import PunterPersistence
@@ -34,8 +36,8 @@ def create_db(db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor
 
     return connection, cursor
 
-class App(ctk.CTk):
 
+class App(ctk.CTk):
     def __init__(self,
                  user_controller: UserController,
                  punter_controller: PunterController,
@@ -52,26 +54,48 @@ class App(ctk.CTk):
         ctk.set_appearance_mode("dark") 
         ctk.set_default_color_theme("green") 
 
-        self.title('Login')
+        self.punter_view = PunterView(master=self, controller=self.punter_controller)
+        self.admin_view = AdminView(master=self, controller=self.admin_controller)
+
+        self.title("123bets")
 
         self.login_frame = ctk.CTkFrame(self, corner_radius=0)
         self.login_frame.grid(row=0, column=0, sticky="ns")
 
-        self.login_label = ctk.CTkLabel(self.login_frame, text="Login Page", font=ctk.CTkFont(size=20, weight="bold"))
+        self.login_label = ctk.CTkLabel(self.login_frame, text="Login", font=ctk.CTkFont(size=20, weight="bold"))
         self.login_label.grid(row=0, column=0, padx=30, pady=(150, 15))
 
-        self.username_entry = ctk.CTkEntry(self.login_frame, width=200, placeholder_text="username")
+        self.username_entry = ctk.CTkEntry(self.login_frame, width=200, placeholder_text="Username")
         self.username_entry.grid(row=1, column=0, padx=30, pady=(15, 15))
-        self.password_entry = ctk.CTkEntry(self.login_frame, width=200, show="*", placeholder_text="password")
+
+        self.password_entry = ctk.CTkEntry(self.login_frame, width=200, show="*", placeholder_text="Password")
         self.password_entry.grid(row=2, column=0, padx=30, pady=(0, 15))
 
-        self.login_button = ctk.CTkButton(self.login_frame, text="Login", command=self.login_event, width=200)
+        self.login_button = ctk.CTkButton(self.login_frame, text="Login", command=self.on_login_click, width=200)
         self.login_button.grid(row=3, column=0, padx=30, pady=(15, 15))
 
-    def login_event(self):
-        u: User | None = self.user_controller.authenticate(self.username_entry.get(), self.password_entry.get())
-        print(u)
-        # TODO: Check type and and instantiate the correct class.
+    def on_login_click(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        u: User | None = self.user_controller.authenticate(username, password)
+
+        self.username_entry.delete(0, len(username))
+        self.password_entry.delete(0, len(password))
+
+        if u is None:
+            CTkMessagebox.CTkMessagebox(title="Error", message="Wrong username or password.", icon="cancel")
+            return
+
+        match u.utype:
+            case 0:
+                p: Punter = self.punter_controller.get_from_user(u)
+                p.wallet = self.wallet_controller.get_wallet_by_id(p.id)
+                self.punter_view.activate_view(return_frame=self.login_frame, user=p)
+
+            case 1:
+                a: Admin = self.admin_controller.get_from_user(u)
+                self.admin_view.activate_view(return_frame=self.login_frame, user=a)
 
 def main():
     conn, cursor = create_db()

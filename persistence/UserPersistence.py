@@ -17,14 +17,15 @@ class UserPersistence:
                          "depress-by-cpf",
                          "select-page",
                          "update",
-                         "select-page-filtered-by-utype" ],
+                         "select-page-filtered-by-utype",
+                         "select-by-id" ],
             SQL_BASE_PATH="sql/user/"
         )
 
     def insert(self, u: User):
         self.db_cursor.execute(
             self.queries["insert"],
-            (u.name, u.login, u.password, u.cpf, u.email, u.permissions)
+            (u.name, u.login, u.password, u.cpf, u.email, u.utype)
         )
 
         u.id = self.db_cursor.lastrowid
@@ -35,7 +36,7 @@ class UserPersistence:
             (id, )
         )
 
-    def get_auth_info(self, login: str) -> tuple[int, str]:
+    def get_auth_info(self, login: str) -> tuple[int, str] | None:
         return self.db_cursor.execute(
             self.queries["select-auth-info"],
             (login, )
@@ -61,9 +62,9 @@ class UserPersistence:
         ).fetchall()
 
         return [
-            User(name=name, login=login, cpf=cpf, email=email, permissions=permissions)
+            User(name=name, login=login, cpf=cpf, email=email, utype=utype)
             for
-            name, login, cpf, email, permissions
+            name, login, cpf, email, utype
             in
             user_data
          ]
@@ -79,12 +80,24 @@ class UserPersistence:
         ).fetchall()
 
         return [
-            User(name=name, login=login, cpf=cpf, email=email, permissions=permissions)
+            User(name=name, login=login, cpf=cpf, email=email, utype=utype)
             for
-            name, login, cpf, email, permissions
+            name, login, cpf, email, utype
             in
             user_data
          ]
+
+    def get_by_id(self, id: int) -> User:
+        user_data: tuple[str, str, str, str, int] = self.db_cursor.execute(
+            self.queries["select-by-id"], (id, )
+        ).fetchone()
+
+        return User(name=user_data[0],
+                    login=user_data[1],
+                    cpf=user_data[2],
+                    email=user_data[3],
+                    utype=user_data[4],
+                    id=id)
 
     def update(self, u: User, new_values: dict):
         """
