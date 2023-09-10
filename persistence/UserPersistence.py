@@ -14,11 +14,10 @@ class UserPersistence(object):
             operations=[ "insert",
                          "delete-by-id",
                          "select-auth-info",
-                         "elevate-by-cpf",
-                         "depress-by-cpf",
                          "select-page",
                          "update",
-                         "select-page-filtered-by-utype",
+                         "elevate-by-cpf",
+                         "depress-by-cpf",
                          "select-by-id" ],
             SQL_BASE_PATH=os.path.join("sql", "user")
         )
@@ -34,11 +33,6 @@ class UserPersistence(object):
 
         u.id = self.db_cursor.lastrowid
 
-    def delete_by_id(self, id: int):
-        self.db_cursor.execute(
-            self.queries["delete-by-id"],
-            (id, )
-        )
 
     def get_auth_info(self, login: str) -> tuple[int, str] | None:
         return self.db_cursor.execute(
@@ -73,23 +67,11 @@ class UserPersistence(object):
             user_data
          ]
 
-    def get_page_filtered_by_utype(self, page_num: int, utype: int, num_items: int = 10):
-        """
-        :param page_num: Page to query, starting from one.
-        :param num_items: Amount of items to query in a single page.
-        """
-        user_data: list[tuple[str, str, str, str, int]] = self.db_cursor.execute(
-            self.queries["select-page-filtered-by-utype"],
-            { "page_num": page_num, "num_items": num_items, "selected_utype": utype }
-        ).fetchall()
-
-        return [
-            User(name=name, login=login, cpf=cpf, email=email, utype=utype)
-            for
-            name, login, cpf, email, utype
-            in
-            user_data
-         ]
+    def delete_by_id(self, id: int):
+        self.db_cursor.execute(
+            self.queries["delete-by-id"],
+            (id, )
+        )
 
     def get_by_id(self, id: int) -> User:
         user_data: tuple[str, str, str, str, int] = self.db_cursor.execute(

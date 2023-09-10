@@ -79,30 +79,11 @@ for idx, (name, cpf, login, password, email) in enumerate(new_users):
     punter_persistence.insert(p)
     wallet_persistence.insert(w)
 
-    if True and (idx + 1) % 2 == 0:
-        user_persistence.elevate_by_cpf(cpf=cpf)
-    else:
-        for i in range(10):
-            punter_bkp = p
-            ttype = Transaction.DEPOSIT if random.random() > 0.5 else Transaction.WITHDRAW
-            t = Transaction(p=p, value=50, ttype=ttype, timestamp=dt.datetime.now().timestamp())
-            transaction_persistence.insert(t=t)
-
-
-print("Punters")
-for i in range(3):
-    print(*user_persistence.get_page_filtered_by_utype(page_num=i + 1, utype=0, num_items=3), sep='\n')
-    print(('-' * 50) + 'x' + ('-' * 50))
-
-print("Admins")
-for i in range(3):
-    print(*user_persistence.get_page_filtered_by_utype(page_num=i + 1, utype=1, num_items=3), sep='\n')
-    print(('-' * 50) + 'x' + ('-' * 50))
-
-print("Transactions")
-for i in range(3):
-    print(*transaction_persistence.select_page_order_by_timestamp(p=punter_bkp, page_num=i + 1, num_items=3), sep='\n')
-    print(('-' * 50) + 'x' + ('-' * 50))
+    for i in range(10):
+        punter_bkp = p
+        ttype = Transaction.DEPOSIT if random.random() > 0.5 else Transaction.WITHDRAW
+        t = Transaction(p=p, value=50, ttype=ttype, timestamp=dt.datetime.now().timestamp())
+        transaction_persistence.insert(t=t)
 
 conn.commit()
 

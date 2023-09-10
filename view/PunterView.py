@@ -32,7 +32,7 @@ class PunterView(object):
     def activate_view(self, user: Punter, post_logout_callback: t.Callable[..., None]):
         self.post_logout_callback = post_logout_callback
 
-        self.main_label.configure(text=user.name)
+        self.main_label.configure(text=f"Welcome, {user.name}!")
 
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100) # Show main frame
 

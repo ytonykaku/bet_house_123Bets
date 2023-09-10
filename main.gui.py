@@ -36,14 +36,20 @@ class App(object):
         admin_persistence       = AdminPersistence(cursor=cursor)
         transaction_persistence = TransactionPersistence(cursor=cursor)
 
-        self.user_controller        = UserController(persistence=user_persistence)
         self.punter_controller      = PunterController(persistence=punter_persistence)
         self.wallet_controller      = WalletController(persistence=wallet_persistence)
-        self.admin_controller       = AdminController(persistence=admin_persistence)
+
+        self.user_controller        = UserController(user_persistence=user_persistence,
+                                                     admin_persistence=admin_persistence,
+                                                     punter_persistence=punter_persistence,
+                                                     wallet_persistence=wallet_persistence)
+
+        self.admin_controller       = AdminController(admin_persistence=admin_persistence,
+                                                      user_persistence=user_persistence)
+
         self.transaction_controller = TransactionController(persistence=transaction_persistence)
 
         self.master = ctk.CTk()
-
         self.master.title("123bets")
 
         self.user_view = UserView(master=self.master, controller=self.user_controller)
