@@ -4,7 +4,7 @@ from models.Admin import Admin
 from persistence.AdminPersistence import AdminPersistence
 
 
-class AdminController():
+class AdminController(object):
 
     def __init__(self, persistence: AdminPersistence):
         self.persistence = persistence

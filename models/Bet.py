@@ -1,4 +1,6 @@
-from models import Wallet, Fight
+from models.Wallet import Wallet
+from models.Fight import Fight
+
 
 class Bet(object):
     id_counter = 0
@@ -17,27 +19,21 @@ class Bet(object):
             Bet.id_counter = Bet.id_counter + 1
             self.id = Bet.id_counter
 
-    def pay(self) -> None:
-        self.wallet.pay_bet(self)
-
-    def collect(self) -> None:
-        self.wallet.collect_bet(self)
-
     def __eq__(self, other) -> bool:
         return self.id == other.id
 
     def __str__(self) -> str:
-        return f'{{' \
+        return '{' \
                f' "wallet": {repr(self.wallet)}, ' \
                f' "value": {self.value}, '\
                f' "date": {self.date}, '\
                f' "winner": "{self.winner}", '\
                f' "fight": "{repr(self.fight)}" '\
-               f'}}'
+               '}'
 
     def __repr__(self) -> str:
-        return f'{{' \
+        return '{' \
                f' "value": {self.value}, '\
                f' "fight": "{repr(self.fight)}" '\
-               f'}}'
+               '}'
 

@@ -1,3 +1,5 @@
+import typing as t
+
 import customtkinter as ctk
 
 from models.Admin import Admin
@@ -8,8 +10,6 @@ class AdminView(object):
 
     def __init__(self, master: ctk.CTk, controller: AdminController):
         self.controller = controller
-
-        self.return_frame: ctk.CTkFrame | None = None
 
         self.main_frame = ctk.CTkFrame(master, corner_radius=0)
         self.main_frame.grid_columnconfigure(0, weight=1)
@@ -27,18 +27,14 @@ class AdminView(object):
                                            hover_color="red")
         self.logout_button.grid(row=1, column=0, padx=30, pady=(15, 15))
 
-    def activate_view(self, return_frame: ctk.CTkFrame, user: Admin):
-        self.return_frame = return_frame
+    def activate_view(self, user: Admin, post_logout_callback: t.Callable[..., None]):
+        self.post_logout_callback = post_logout_callback
 
         self.main_label.configure(text=f"[ADMIN] {str(user)}")
 
-        self.return_frame.grid_forget() # Remove the previous frame
-        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100) # Show main frame
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)
 
     def on_logout_click(self):
-        if self.return_frame is None:
-            return
-
         self.main_frame.grid_forget()
-        self.return_frame.grid(row=0, column=0, sticky="ns")
+        self.post_logout_callback()
 

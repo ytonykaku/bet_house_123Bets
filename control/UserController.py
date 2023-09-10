@@ -2,7 +2,7 @@ from models.User import User
 from persistence.UserPersistence import UserPersistence
 
 
-class UserController():
+class UserController(object):
 
     def __init__(self, persistence: UserPersistence):
         self.persistence = persistence

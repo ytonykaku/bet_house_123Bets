@@ -1,10 +1,12 @@
+import os
 import sqlite3 as sql3
 
 from persistence import utils
+
 from models.Wallet import Wallet
 
 
-class WalletPersistence:
+class WalletPersistence(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor
@@ -14,8 +16,11 @@ class WalletPersistence:
                          "deposit",
                          "withdraw",
                          "get-by-id" ],
-            SQL_BASE_PATH="sql/wallet/"
+            SQL_BASE_PATH=os.path.join("sql", "wallet")
         )
+
+        with open(os.path.join("sql", "wallet", "table.sql")) as f:
+            cursor.execute(f.read())
 
     def insert(self, w: Wallet):
         self.db_cursor.execute(self.queries["insert"], (w.id,))

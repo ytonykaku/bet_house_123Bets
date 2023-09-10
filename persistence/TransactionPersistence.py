@@ -1,19 +1,25 @@
+import os
 import sqlite3 as sql3
-from models.Punter import Punter
 
 from persistence import utils
+
+from models.Punter import Punter
 from models.Transaction import Transaction
 
 
-class TransactionPersistence:
+class TransactionPersistence(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor
 
         self.queries = utils.create_operations_dict(
-            operations=[ "insert", "select-page-order-by-timestamp" ],
-            SQL_BASE_PATH="sql/transaction/"
+            operations=[ "insert",
+                        "select-page-order-by-timestamp" ],
+            SQL_BASE_PATH=os.path.join("sql", "transaction")
         )
+
+        with open(os.path.join("sql", "transaction", "table.sql")) as f:
+            cursor.execute(f.read())
 
     def insert(self, t: Transaction):
         self.db_cursor.execute(

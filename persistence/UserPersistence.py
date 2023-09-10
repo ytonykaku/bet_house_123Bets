@@ -1,10 +1,11 @@
+import os
 import sqlite3 as sql3
 
 from models.User import User
 from persistence import utils
 
 
-class UserPersistence:
+class UserPersistence(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor
@@ -19,8 +20,11 @@ class UserPersistence:
                          "update",
                          "select-page-filtered-by-utype",
                          "select-by-id" ],
-            SQL_BASE_PATH="sql/user/"
+            SQL_BASE_PATH=os.path.join("sql", "user")
         )
+
+        with open(os.path.join("sql", "user", "table.sql")) as f:
+            cursor.execute(f.read())
 
     def insert(self, u: User):
         self.db_cursor.execute(
@@ -93,9 +97,9 @@ class UserPersistence:
         ).fetchone()
 
         return User(name=user_data[0],
-                    login=user_data[1],
-                    cpf=user_data[2],
-                    email=user_data[3],
+                    cpf=user_data[1],
+                    email=user_data[2],
+                    login=user_data[3],
                     utype=user_data[4],
                     id=id)
 

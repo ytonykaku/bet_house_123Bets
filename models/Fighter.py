@@ -1,3 +1,5 @@
+
+
 class Fighter(object):
     def __init__(self,
                  name: str,

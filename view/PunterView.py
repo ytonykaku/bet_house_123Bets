@@ -1,3 +1,5 @@
+import typing as t
+
 import customtkinter as ctk
 
 from models.Punter import Punter
@@ -27,18 +29,14 @@ class PunterView(object):
                                            hover_color="red")
         self.logout_button.grid(row=1, column=0, padx=30, pady=(15, 15))
 
-    def activate_view(self, return_frame: ctk.CTkFrame, user: Punter):
-        self.return_frame = return_frame
+    def activate_view(self, user: Punter, post_logout_callback: t.Callable[..., None]):
+        self.post_logout_callback = post_logout_callback
 
         self.main_label.configure(text=user.name)
 
-        self.return_frame.grid_forget() # Remove the previous frame
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100) # Show main frame
 
     def on_logout_click(self):
-        if self.return_frame is None:
-            return
-
         self.main_frame.grid_forget()
-        self.return_frame.grid(row=0, column=0, sticky="ns")
+        self.post_logout_callback()
 

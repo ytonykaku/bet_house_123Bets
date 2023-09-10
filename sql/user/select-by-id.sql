@@ -1,5 +1,5 @@
 SELECT
-name, login, cpf, email, utype
+name, cpf, email, login, utype
 FROM
 User
 WHERE

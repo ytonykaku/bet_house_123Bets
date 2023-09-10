@@ -1,5 +1,4 @@
-# import argon2 as a2
-# Queria adicionar hash nas senhas mas vou focar em coisas mais importantes antes de mexer nisso
+
 
 class User(object):
 
@@ -24,3 +23,4 @@ class User(object):
 
     def __repr__(self) -> str:
         return self.name
+
