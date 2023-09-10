@@ -55,13 +55,13 @@ class App(object):
             case 0:
                 p: Punter = self.punter_controller.get_from_user(u)
                 p.wallet = self.wallet_controller.get_by_id(p.id)
-                self.punter_view.activate_view(user=p, post_logout_callback=self.on_logout)
+                self.punter_view.activate_view(user=p, post_logout_callback=self.post_logout)
 
             case 1:
                 a: Admin = self.admin_controller.get_from_user(u)
-                self.admin_view.activate_view(user=a, post_logout_callback=self.on_logout)
+                self.admin_view.activate_view(user=a, post_logout_callback=self.post_logout)
 
-    def on_logout(self):
+    def post_logout(self):
         self.user_view.activate_view(post_login_callback=self.post_login)
 
     def create_db(self, db_name: str = "db.sqlite3") -> tuple[sql3.Connection, sql3.Cursor]:
