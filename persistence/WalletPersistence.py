@@ -26,10 +26,12 @@ class WalletPersistence(object):
         self.db_cursor.execute(self.queries["insert"], (w.id,))
 
     def deposit(self, w: Wallet, value: float):
+        w.value_available += value
         self.db_cursor.execute(self.queries["deposit"], (value, w.id))
 
     def withdraw(self, w: Wallet, value: float):
         self.db_cursor.execute(self.queries["withdraw"], (value, w.id))
+        w.value_available -= value
 
     def get_by_id(self, id: int) -> Wallet:
         data: tuple[float, float] = self.db_cursor.execute(self.queries["get-by-id"], (id, )) \
