@@ -41,3 +41,6 @@ class PunterController(object):
         self.wallet_persistence.withdraw(p.wallet, value)
         self.transaction_persistence.insert(t)
 
+    def fetch_transactions(self, p: Punter) -> list[Transaction]:
+        return self.transaction_persistence.fetch(p)
+

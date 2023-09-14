@@ -14,7 +14,7 @@ class TransactionPersistence(object):
 
         self.queries = utils.create_operations_dict(
             operations=[ "insert",
-                        "select-page-order-by-timestamp" ],
+                         "fetch" ],
             SQL_BASE_PATH=os.path.join("sql", "transaction")
         )
 
@@ -27,10 +27,10 @@ class TransactionPersistence(object):
             (t.owner.id, t.ttype, t.value, t.timestamp)
         )
 
-    def select_page_order_by_timestamp(self, p: Punter, page_num: int, num_items: int = 10) -> list[Transaction]:
+    def fetch(self, p: Punter) -> list[Transaction]:
         transactions: list[tuple[int, int, float, float]] = self.db_cursor.execute(
-            self.queries["select-page-order-by-timestamp"],
-            { "punter_id": p.id, "page_num": page_num, "num_items": num_items }
+            self.queries["fetch"],
+            { "punter_id": p.id }
         ).fetchall()
 
         return [

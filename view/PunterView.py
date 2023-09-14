@@ -1,10 +1,12 @@
 import typing as t
+import datetime as dt
 
 import customtkinter as ctk
 import CTkMessagebox
 
 from models.Punter import Punter
 from control.PunterController import PunterController
+from models.Transaction import Transaction
 
 
 class PunterView(object):
@@ -47,9 +49,43 @@ class PunterView(object):
                                           text="OK",
                                           command=self.withdraw_value).grid(row=0, column=2)
 
+        self.transactions = self.tabs.add("Transaction")
+        self.fetch_btn = ctk.CTkButton(self.transactions,
+                                          text="Fetch",
+                                          command=self.fetch_transactions).grid()
+        self.transactions_list = ctk.CTkScrollableFrame(master=self.transactions,
+                                                 width=300, height=30,
+                                                 corner_radius=6)
+        self.transactions_list.grid(pady=5)
+
+
         self.tabs.grid()
 
         self.logout_button.grid(padx=30, pady=(15, 15))
+
+    def fetch_transactions(self):
+        for s in self.transactions_list.grid_slaves():
+            s.destroy()
+
+        transactions = self.controller.fetch_transactions(self.punter)
+
+        for t in transactions:
+            master = ctk.CTkFrame(self.transactions_list,
+                                  width=300, height=10,
+                                  bg_color="white")
+            tstr = 'Deposit' if t.ttype == Transaction.DEPOSIT else 'Withdraw'
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Type: {tstr}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Value: {t.value}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Date: {dt.datetime.fromtimestamp(t.timestamp)}").grid(padx=5, pady=5)
+
+            master.grid()
+
 
     def deposit_value(self):
         try:
@@ -61,8 +97,7 @@ class PunterView(object):
 
             self.controller.deposit(self.punter, value)
             self.update_main_label()
-        except Exception as e:
-            print(e)
+        except Exception as _:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def withdraw_value(self):
@@ -78,8 +113,7 @@ class PunterView(object):
 
             self.controller.withdraw(self.punter, value)
             self.update_main_label()
-        except Exception as e:
-            print(e)
+        except Exception as _:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def activate_view(self, user: Punter, post_logout_callback: t.Callable[..., None]):
