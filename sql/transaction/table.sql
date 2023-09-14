@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS PTransaction (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    pid INTEGER NOT NULL CHECK(pid != 0),
+    pid INTEGER NOT NULL,
 
-    ttype INTEGER NOT NULL CHECK(ttype in (0, 1)),
-    value REAL NOT NULL CHECK(value > 0),
+    ttype INTEGER NOT NULL,
+    value REAL NOT NULL,
     timestamp REAL NOT NULL,
 
     FOREIGN KEY(pid) REFERENCES Punter(uid) ON DELETE CASCADE

@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS Punter (
-    uid INTEGER PRIMARY KEY CHECK(uid != 0),
+    uid INTEGER PRIMARY KEY,
 
-    profit REAL CHECK(profit >= 0.0) DEFAULT 0.0,
-    loss REAL CHECK(loss >= 0.0) DEFAULT 0.0,
+    profit REAL DEFAULT 0.0,
+    loss REAL DEFAULT 0.0,
     investments TEXT NOT NULL DEFAULT "", -- CSV: Comma Separeted Values,
 
     FOREIGN KEY(uid) REFERENCES User(id) ON DELETE CASCADE

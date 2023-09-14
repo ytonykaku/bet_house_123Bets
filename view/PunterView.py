@@ -59,25 +59,27 @@ class PunterView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
                 return
 
-            self.controller.wallet_persistence.deposit(self.punter.wallet, value)
+            self.controller.deposit(self.punter, value)
             self.update_main_label()
-        except:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
-
-    def update_main_label(self):
-        self.main_label.configure(text=f"Welcome, {self.punter.name}!\nYou have: ${self.punter.wallet.value_available} bonoros.")
 
     def withdraw_value(self):
         try:
             value = float(self.w_value.get())
 
+            if value > self.punter.wallet.value_available:
+                raise Exception()
+
             if value < 0.0:
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
                 return
 
-            self.controller.wallet_persistence.withdraw(self.punter.wallet, value)
+            self.controller.withdraw(self.punter, value)
             self.update_main_label()
-        except:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def activate_view(self, user: Punter, post_logout_callback: t.Callable[..., None]):
@@ -88,6 +90,9 @@ class PunterView(object):
         self.update_main_label()
 
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100) # Show main frame
+
+    def update_main_label(self):
+        self.main_label.configure(text=f"Welcome, {self.punter.name}!\nYou have: ${self.punter.wallet.value_available} bonoros.")
 
     def on_logout_click(self):
         self.main_frame.grid_forget()
