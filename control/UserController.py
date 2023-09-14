@@ -48,3 +48,6 @@ class UserController(object):
                 a = Admin(name=u.name, cpf=u.cpf, login=u.login, password=u.password, email=u.email, uid=u.id)
                 self.admin_persistence.insert(a)
 
+    def fetch_users(self, page_num: int, num_items: int = 5) -> list[User]:
+        return self.user_persistence.get_page(page_num=page_num, num_items=num_items)
+

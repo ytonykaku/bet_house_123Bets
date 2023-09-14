@@ -36,7 +36,10 @@ class App(object):
         admin_persistence       = AdminPersistence(cursor=cursor)
         transaction_persistence = TransactionPersistence(cursor=cursor)
 
-        self.punter_controller      = PunterController(persistence=punter_persistence)
+        self.punter_controller      = PunterController(punter_persistence=punter_persistence,
+                                                       wallet_persistence=wallet_persistence,
+                                                       transaction_persistence=transaction_persistence)
+
         self.wallet_controller      = WalletController(persistence=wallet_persistence)
 
         self.user_controller        = UserController(user_persistence=user_persistence,

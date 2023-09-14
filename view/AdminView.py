@@ -45,6 +45,20 @@ class AdminView(object):
                                 font=Fonts.button_med_font())
         depress_button.grid(pady=5)
 
+        self.users = tabs.add("Users")
+        fetch_button = ctk.CTkButton(master=self.users,
+                                     text="Fetch",
+                                     width=300, height=30,
+                                     command=self.fetch_users,
+                                     corner_radius=6,
+                                     font=Fonts.button_med_font())
+        fetch_button.grid(pady=5)
+
+        self.users_list = ctk.CTkScrollableFrame(master=self.users,
+                                                 width=300, height=30,
+                                                 corner_radius=6)
+        self.users_list.grid(pady=5)
+
         self.logout_button = ctk.CTkButton(self.main_frame,
                                            text="Logout",
                                            command=self.on_logout_click,
@@ -58,6 +72,25 @@ class AdminView(object):
         self.main_label.configure(text=f"Welcome, [ADMIN] {str(user)}!")
 
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=50)
+
+    def fetch_users(self):
+        for s in self.users_list.grid_slaves():
+            s.destroy()
+
+        users_fetched = self.controller.fetch_users();
+
+        for _, user in enumerate(users_fetched):
+            master = ctk.CTkFrame(self.users_list,
+                                  width=300, height=10,
+                                  bg_color="white")
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Name: {str(user)}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"CPF: {user.cpf}").grid(padx=5, pady=5)
+
+            master.grid()
 
     def on_logout_click(self):
         self.main_frame.grid_forget()

@@ -24,7 +24,7 @@ class AdminController(object):
     def depress_by_cpf(self, cpf: str) -> None:
         self.user_persistence.depress_by_cpf(cpf=cpf)
 
-    def fetch_users(self, page_num: int, num_items: int = 5) -> list[User]:
-        return self.user_persistence.get_page(page_num=page_num, num_items=num_items)
+    def fetch_users(self) -> list[User]:
+        return self.user_persistence.fetch_users()
 
 

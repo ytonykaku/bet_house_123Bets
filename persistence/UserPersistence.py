@@ -14,7 +14,7 @@ class UserPersistence(object):
             operations=[ "insert",
                          "delete-by-id",
                          "select-auth-info",
-                         "select-page",
+                         "fetch-users",
                          "update",
                          "elevate-by-cpf",
                          "depress-by-cpf",
@@ -50,13 +50,9 @@ class UserPersistence(object):
             self.queries["depress-by-cpf"].format(cpf=cpf),
         )
 
-    def get_page(self, page_num: int, num_items: int = 10):
-        """
-        :param page_num: Page to query, starting from one.
-        :param num_items: Amount of items to query in a single page.
-        """
+    def fetch_users(self):
         user_data: list[tuple[str, str, str, str, int]] = self.db_cursor.execute(
-            self.queries["select-page"], { "page_num": page_num, "num_items": num_items }
+            self.queries["fetch-users"]
         ).fetchall()
 
         return [
