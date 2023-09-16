@@ -48,7 +48,8 @@ class App(object):
                                                      wallet_persistence=wallet_persistence)
 
         self.admin_controller       = AdminController(admin_persistence=admin_persistence,
-                                                      user_persistence=user_persistence)
+                                                      user_persistence=user_persistence,
+                                                      wallet_persistence=wallet_persistence)
 
         self.transaction_controller = TransactionController(persistence=transaction_persistence)
 

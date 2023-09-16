@@ -15,6 +15,7 @@ class UserPersistence(object):
                          "delete-by-id",
                          "select-auth-info",
                          "fetch-users",
+                         "fetch-user-by-cpf",
                          "update",
                          "elevate-by-cpf",
                          "depress-by-cpf",
@@ -33,7 +34,6 @@ class UserPersistence(object):
 
         u.id = self.db_cursor.lastrowid
 
-
     def get_auth_info(self, login: str) -> tuple[int, str] | None:
         return self.db_cursor.execute(
             self.queries["select-auth-info"],
@@ -51,17 +51,28 @@ class UserPersistence(object):
         )
 
     def fetch_users(self):
-        user_data: list[tuple[str, str, str, str, int]] = self.db_cursor.execute(
+        user_data: list[tuple[int, str, str, str, str, int]] = self.db_cursor.execute(
             self.queries["fetch-users"]
         ).fetchall()
 
         return [
-            User(name=name, login=login, cpf=cpf, email=email, utype=utype)
+            User(name=name, login=login, cpf=cpf, email=email, utype=utype, id=id)
             for
-            name, login, cpf, email, utype
+            id, name, login, cpf, email, utype
             in
             user_data
          ]
+
+    def fetch_user_by_cpf(self, cpf: str) -> User:
+        user_data: tuple[int, str, str, str, str, int] = self.db_cursor.execute(
+            self.queries["fetch-user-by-cpf"],
+            { "cpf": cpf }
+        ).fetchone()
+
+        id, name, login, cpf, email, utype = user_data
+
+        return User(name=name, login=login, cpf=cpf, email=email, utype=utype, id=id)
+
 
     def delete_by_id(self, id: int):
         self.db_cursor.execute(

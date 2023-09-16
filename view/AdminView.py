@@ -1,11 +1,14 @@
 import typing as t
+import copy
 
 import customtkinter as ctk
 import CTkMessagebox
 
 from view.fonts import Fonts
 
+from models.User import User
 from models.Admin import Admin
+
 from control.AdminController import AdminController
 
 
@@ -26,8 +29,8 @@ class AdminView(object):
 
         self.permissions = tabs.add("Permissions")
 
-        self.cpf_entry = ctk.CTkEntry(master=self.permissions, width=300, height=30, placeholder_text="CPF")
-        self.cpf_entry.grid(padx=10)
+        self.p_cpf_entry = ctk.CTkEntry(master=self.permissions, width=300, height=30, placeholder_text="CPF")
+        self.p_cpf_entry.grid(padx=10)
 
         elevate_button = ctk.CTkButton(master=self.permissions,
                                 text="Elevate",
@@ -46,13 +49,16 @@ class AdminView(object):
         depress_button.grid(pady=5)
 
         self.users = tabs.add("Users")
-        fetch_button = ctk.CTkButton(master=self.users,
-                                     text="Fetch",
-                                     width=300, height=30,
-                                     command=self.fetch_users,
-                                     corner_radius=6,
-                                     font=Fonts.button_med_font())
-        fetch_button.grid(pady=5)
+
+        self.cpf_entry = ctk.CTkEntry(self.users, width=300, placeholder_text="CPF")
+        self.cpf_entry.grid()
+
+        ctk.CTkButton(master=self.users,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=self.fetch_users,
+                      corner_radius=6,
+                      font=Fonts.button_med_font()).grid(pady=5)
 
         self.users_list = ctk.CTkScrollableFrame(master=self.users,
                                                  width=300, height=30,
@@ -67,6 +73,7 @@ class AdminView(object):
         self.logout_button.grid(row=3, column=0, padx=30, pady=(15, 15))
 
     def activate_view(self, user: Admin, post_logout_callback: t.Callable[..., None]):
+        self.current_admin = user
         self.post_logout_callback = post_logout_callback
 
         self.main_label.configure(text=f"Welcome, [ADMIN] {str(user)}!")
@@ -77,7 +84,14 @@ class AdminView(object):
         for s in self.users_list.grid_slaves():
             s.destroy()
 
-        users_fetched = self.controller.fetch_users();
+        cpf = self.cpf_entry.get()
+
+        users_fetched: list[User] = list()
+
+        if cpf == "":
+            users_fetched = self.controller.fetch_users();
+        else:
+            users_fetched.append(self.controller.fetch_user_by_cpf(cpf))
 
         for _, user in enumerate(users_fetched):
             master = ctk.CTkFrame(self.users_list,
@@ -89,15 +103,33 @@ class AdminView(object):
             ctk.CTkLabel(master,
                          width=300,
                          text=f"CPF: {user.cpf}").grid(padx=5, pady=5)
+            ctk.CTkButton(master,
+                          width=300,
+                          text="Delete",
+                          fg_color="red",
+                          command=lambda user=user: self.delete_user(user)).grid(padx=5, pady=5)
 
             master.grid()
+
+    def delete_user(self, u: User):
+        if u.id == self.current_admin.id:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete connected user.", icon="cancel")
+            return
+
+        if u.utype == 0:
+            if self.controller.has_money_or_bets(u):
+                CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete user with money or bets on the system.", icon="cancel")
+                return
+
+        self.controller.delete_user(u)
+        self.fetch_users()
 
     def on_logout_click(self):
         self.main_frame.grid_forget()
         self.post_logout_callback()
 
     def elevate_user_by_cpf(self):
-        cpf = self.cpf_entry.get()
+        cpf = self.p_cpf_entry.get()
 
         try:
             self.controller.elevate_by_cpf(cpf)
@@ -107,7 +139,7 @@ class AdminView(object):
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Elevation failed to execut.", icon="cancel")
 
     def depress_user_by_cpf(self):
-        cpf = self.cpf_entry.get()
+        cpf = self.p_cpf_entry.get()
 
         try:
             self.controller.depress_by_cpf(cpf)

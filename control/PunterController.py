@@ -20,12 +20,14 @@ class PunterController(object):
         self.transaction_persistence = transaction_persistence
 
     def get_from_user(self, user: User) -> Punter:
+        w = self.wallet_persistence.get_by_id(user.id)
+
         p = Punter(name=user.name,
                    cpf=user.cpf,
                    email=user.email,
                    login=user.login,
                    uid=user.id,
-                   wallet=None)
+                   wallet=w)
 
         self.punter_persistence.get_profit_and_loss(p)
 

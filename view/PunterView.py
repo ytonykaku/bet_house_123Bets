@@ -50,14 +50,20 @@ class PunterView(object):
                                           command=self.withdraw_value).grid(row=0, column=2)
 
         self.transactions = self.tabs.add("Transaction")
-        self.fetch_btn = ctk.CTkButton(self.transactions,
-                                          text="Fetch",
-                                          command=self.fetch_transactions).grid()
-        self.transactions_list = ctk.CTkScrollableFrame(master=self.transactions,
-                                                 width=300, height=30,
-                                                 corner_radius=6)
-        self.transactions_list.grid(pady=5)
 
+        self.year_entry = ctk.CTkEntry(master=self.transactions, width=300, height=30, placeholder_text="Year")
+        self.year_entry.grid(padx=10)
+
+        ctk.CTkButton(master=self.transactions,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=self.fetch_transactions,
+                      corner_radius=6).grid(pady=5)
+
+        self.transactions_list = ctk.CTkScrollableFrame(master=self.transactions,
+                                                        width=300, height=30,
+                                                        corner_radius=6)
+        self.transactions_list.grid(pady=5)
 
         self.tabs.grid()
 
@@ -69,11 +75,25 @@ class PunterView(object):
 
         transactions = self.controller.fetch_transactions(self.punter)
 
+        year = self.year_entry.get()
+
+        if year:
+            try:
+                year = int(year)
+            except:
+                CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid year.", icon="cancel")
+                return
+
         for t in transactions:
+            if type(year) == int and dt.datetime.fromtimestamp(t.timestamp).year != year:
+                continue
+
             master = ctk.CTkFrame(self.transactions_list,
                                   width=300, height=10,
                                   bg_color="white")
+
             tstr = 'Deposit' if t.ttype == Transaction.DEPOSIT else 'Withdraw'
+
             ctk.CTkLabel(master,
                          width=300,
                          text=f"Type: {tstr}").grid(padx=5, pady=5)
