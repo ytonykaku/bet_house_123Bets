@@ -7,6 +7,8 @@ from models.User import User
 
 from control.UserController import UserController
 
+from view import Validation
+
 
 class UserView(object):
 
@@ -107,21 +109,21 @@ class UserView(object):
         back_button.grid(padx=30, pady=(15, 15))
 
     def on_confim_register_click(self):
-        name = self.nameEntry.get()
-        cpf = self.cpfEntry.get()
-        email = self.emailEntry.get()
-        username = self.usernameEntry.get()
-        password = self.passwordEntry.get()
-
-        u = User(name=name, cpf=cpf, email=email, login=username, password=password)
-
         try:
+            name     = Validation.validarVazio(self.nameEntry.get())
+            cpf      = Validation.validarCpf(self.cpfEntry.get())
+            email    = Validation.validarVazio(self.emailEntry.get())
+            username = Validation.validarVazio(self.usernameEntry.get())
+            password = Validation.validarVazio(self.passwordEntry.get())
+
+            u = User(name=name, cpf=cpf, email=email, login=username, password=password)
+
             self.controller.register(u=u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="You are now registered!", icon="check")
-        except Exception as e:
-            print(e)
+        except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Failed to register.", icon="cancel")
+            return
 
         self.register_form_frame.grid_forget()
         self.login_frame.grid()
