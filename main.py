@@ -1,5 +1,3 @@
-#!/bin/env python3.11
-
 import sqlite3 as sql3
 
 import customtkinter as ctk
@@ -53,6 +51,10 @@ class App(object):
 
         self.transaction_controller = TransactionController(persistence=transaction_persistence)
 
+        a = Admin(name="Admin", cpf="00000000000", login="admin", password="admin", email="admin@example.com")
+        user_persistence.insert(a)
+        admin_persistence.insert(a)
+
         self.master = ctk.CTk()
         self.master.title("123bets")
 
@@ -61,7 +63,9 @@ class App(object):
         self.admin_view = AdminView(master=self.master, controller=self.admin_controller)
 
         self.user_view.activate_view(post_login_callback=self.post_login)
-
+        
+        
+        
     def post_login(self, u: User):
         match u.utype:
             case 0:
@@ -92,4 +96,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
