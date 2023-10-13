@@ -1,5 +1,4 @@
 import typing as t
-import copy
 
 import customtkinter as ctk
 import CTkMessagebox
@@ -11,6 +10,136 @@ from models.Admin import Admin
 
 from control.AdminController import AdminController
 
+class PermissionsTab(ctk.CTkFrame):
+
+    def __init__(self, master, elevate_callback, depress_callback, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.cpf = ctk.CTkEntry(master=self, width=300, height=30, placeholder_text="CPF")
+        self.cpf.grid(padx=10)
+
+        elevate_button = ctk.CTkButton(master=self,
+                                       text="Elevate",
+                                       width=300, height=30,
+                                       command=elevate_callback,
+                                       corner_radius=6,
+                                       font=Fonts.button_med_font())
+        elevate_button.grid(pady=5)
+
+        depress_button = ctk.CTkButton(master=self,
+                                       text="Depress",
+                                       width=300, height=30,
+                                       command=depress_callback,
+                                       corner_radius=6,
+                                       font=Fonts.button_med_font())
+        depress_button.grid(pady=5)
+
+class UsersTab(ctk.CTkFrame):
+
+    def __init__(self, master, fetch_callback, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.cpf = ctk.CTkEntry(self, width=300, placeholder_text="CPF")
+        self.cpf.grid()
+
+        ctk.CTkButton(master=self,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=fetch_callback,
+                      corner_radius=6,
+                      font=Fonts.button_med_font()).grid(pady=5)
+
+        self.users = ctk.CTkScrollableFrame(master=self,
+                                            width=300, height=30,
+                                            corner_radius=6)
+        self.users.grid(pady=5)
+
+    def clear(self):
+        for s in self.users.grid_slaves():
+            s.destroy()
+
+class FightersTab(ctk.CTkFrame):
+
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+
+        tabs = ctk.CTkTabview(self)
+
+        create_tab = tabs.add("Create")
+
+        create_tab.grid()
+
+        self.name_to_create = ctk.CTkEntry(create_tab, width=300, placeholder_text="NAME")
+        self.category = ctk.CTkEntry(create_tab, width=300, placeholder_text="CATEGORY")
+        self.height = ctk.CTkEntry(create_tab, width=300, placeholder_text="HEIGHT")
+        self.nationality = ctk.CTkEntry(create_tab, width=300, placeholder_text="NATIONALITY")
+
+        self.name_to_create.grid()
+        self.category.grid()
+        self.height.grid()
+        self.nationality.grid()
+
+        create_tab.grid()
+
+        delete_tab = tabs.add("Delete")
+
+        self.name_to_delete = ctk.CTkEntry(delete_tab, width=300, placeholder_text="NAME")
+
+        self.name_to_delete.grid()
+
+        ctk.CTkButton(master=delete_tab,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=lambda : print("Not Implemented Yet."),
+                      corner_radius=6,
+                      font=Fonts.button_med_font()).grid(pady=5)
+
+        update_tab = tabs.add("Update")
+
+        self.name_to_update = ctk.CTkEntry(update_tab, width=300, placeholder_text="NAME")
+
+        self.name_to_update.grid()
+
+        ctk.CTkButton(master=update_tab,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=lambda : print("Not Implemented Yet."),
+                      corner_radius=6,
+                      font=Fonts.button_med_font()).grid(pady=5)
+
+        tabs.grid()
+
+class FightsTab(ctk.CTkFrame):
+
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        tabs = ctk.CTkTabview(self)
+
+        create_tab = tabs.add("Create")
+
+        create_tab.grid()
+
+        self.fighterA = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fighter A")
+        self.fighterB = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fighter B")
+
+        self.fighterA.grid()
+        self.fighterB.grid()
+
+        create_tab.grid()
+
+        delete_tab = tabs.add("Delete")
+
+        # TODO: List fights.
+
+        delete_tab.grid()
+
+        update_tab = tabs.add("Update")
+
+        # TODO: List fights.
+
+        update_tab.grid()
+
+        tabs.grid()
 
 class AdminView(object):
 
@@ -25,52 +154,29 @@ class AdminView(object):
         self.main_label.grid(row=0, column=0, padx=30, pady=(30, 15))
 
         tabs = ctk.CTkTabview(self.main_frame)
+
+        self.permissions_tab = PermissionsTab(master=tabs.add("Permissions"),
+                                              elevate_callback=self.elevate_user_by_cpf,
+                                              depress_callback=self.depress_user_by_cpf)
+        self.permissions_tab.grid()
+
+        self.users_tab = UsersTab(master=tabs.add("Users"),
+                                  fetch_callback=self.fetch_users)
+        self.users_tab.grid()
+
+        self.fighters_tab = FightersTab(master=tabs.add("Fighters"))
+        self.fighters_tab.grid()
+
+        self.fights_tab = FightsTab(master=tabs.add("Fights"))
+        self.fights_tab.grid()
+
         tabs.grid(row=1, column=0)
 
-        self.permissions = tabs.add("Permissions")
-
-        self.p_cpf_entry = ctk.CTkEntry(master=self.permissions, width=300, height=30, placeholder_text="CPF")
-        self.p_cpf_entry.grid(padx=10)
-
-        elevate_button = ctk.CTkButton(master=self.permissions,
-                                text="Elevate",
-                                width=300, height=30,
-                                command=self.elevate_user_by_cpf,
-                                corner_radius=6,
-                                font=Fonts.button_med_font())
-        elevate_button.grid(pady=5)
-
-        depress_button = ctk.CTkButton(master=self.permissions,
-                                text="Depress",
-                                width=300, height=30,
-                                command=self.depress_user_by_cpf,
-                                corner_radius=6,
-                                font=Fonts.button_med_font())
-        depress_button.grid(pady=5)
-
-        self.users = tabs.add("Users")
-
-        self.cpf_entry = ctk.CTkEntry(self.users, width=300, placeholder_text="CPF")
-        self.cpf_entry.grid()
-
-        ctk.CTkButton(master=self.users,
-                      text="Fetch",
-                      width=300, height=30,
-                      command=self.fetch_users,
-                      corner_radius=6,
-                      font=Fonts.button_med_font()).grid(pady=5)
-
-        self.users_list = ctk.CTkScrollableFrame(master=self.users,
-                                                 width=300, height=30,
-                                                 corner_radius=6)
-        self.users_list.grid(pady=5)
-
-        self.logout_button = ctk.CTkButton(self.main_frame,
-                                           text="Logout",
-                                           command=self.on_logout_click,
-                                           fg_color="red",
-                                           hover_color="red")
-        self.logout_button.grid(row=3, column=0, padx=30, pady=(15, 15))
+        ctk.CTkButton(self.main_frame,
+                      text="Logout",
+                      command=self.on_logout_click,
+                      fg_color="red",
+                      hover_color="red").grid(row=3, column=0, padx=30, pady=(15, 15))
 
     def activate_view(self, user: Admin, post_logout_callback: t.Callable[..., None]):
         self.current_admin = user
@@ -81,20 +187,19 @@ class AdminView(object):
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=50)
 
     def fetch_users(self):
-        for s in self.users_list.grid_slaves():
-            s.destroy()
+        self.users_tab.clear()
 
-        cpf = self.cpf_entry.get()
+        cpf = self.users_tab.cpf.get()
 
         users_fetched: list[User] = list()
 
         if cpf == "":
-            users_fetched = self.controller.fetch_users();
+            users_fetched.extend(self.controller.fetch_users())
         else:
             users_fetched.append(self.controller.fetch_user_by_cpf(cpf))
 
         for _, user in enumerate(users_fetched):
-            master = ctk.CTkFrame(self.users_list,
+            master = ctk.CTkFrame(self.users_tab.users,
                                   width=300, height=10,
                                   bg_color="white")
             ctk.CTkLabel(master,
@@ -129,7 +234,7 @@ class AdminView(object):
         self.post_logout_callback()
 
     def elevate_user_by_cpf(self):
-        cpf = self.p_cpf_entry.get()
+        cpf = self.permissions_tab.cpf.get()
 
         try:
             self.controller.elevate_by_cpf(cpf)
@@ -139,7 +244,7 @@ class AdminView(object):
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Elevation failed to execut.", icon="cancel")
 
     def depress_user_by_cpf(self):
-        cpf = self.p_cpf_entry.get()
+        cpf = self.permissions_tab.cpf.get()
 
         try:
             self.controller.depress_by_cpf(cpf)

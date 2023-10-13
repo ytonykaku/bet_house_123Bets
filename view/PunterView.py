@@ -8,6 +8,72 @@ from models.Punter import Punter
 from control.PunterController import PunterController
 from models.Transaction import Transaction
 
+class DepositTab(ctk.CTkFrame):
+
+    def __init__(self, master, deposit_callback, **kwargs):
+        super().__init__(master, **kwargs)
+
+        ctk.CTkLabel(self, text="$").grid(row=0, column=0)
+
+        self.value = ctk.CTkEntry(self)
+        self.value.grid(pady=5, padx=5, row=0, column=1)
+
+        ctk.CTkButton(self,
+                      text="OK",
+                      command=deposit_callback).grid(row=0, column=2)
+
+class WithdrawTab(ctk.CTkFrame):
+
+    def __init__(self, master, withdraw_callback, **kwargs):
+        super().__init__(master, **kwargs)
+
+        ctk.CTkLabel(self, text="$").grid(row=0, column=0)
+
+        self.value = ctk.CTkEntry(self)
+        self.value.grid(pady=5, padx=5, row=0, column=1)
+
+        ctk.CTkButton(self,
+                      text="OK",
+                      command=withdraw_callback).grid(row=0, column=2)
+
+class TransactionTab(ctk.CTkFrame):
+
+    def __init__(self, master, fetch_callback, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.year = ctk.CTkEntry(master=self, width=300, height=30, placeholder_text="Year")
+        self.year.grid(padx=10)
+
+        ctk.CTkButton(master=self,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=fetch_callback,
+                      corner_radius=6).grid(pady=5)
+
+        self.transactions = ctk.CTkScrollableFrame(master=self,
+                                                   width=300, height=30,
+                                                   corner_radius=6)
+        self.transactions.grid(pady=5)
+
+    def clear(self):
+        for s in self.transactions.grid_slaves():
+            s.destroy()
+
+class BetTab(ctk.CTkFrame):
+
+    def __init__(self, master, func_fetch_fights, bet_callback, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.func_fetch_fights = func_fetch_fights
+        self.bet_callback = bet_callback
+
+        tab = ctk.CTkTabview(self)
+
+        tab.add("New").grid()
+        tab.add("History").grid()
+        tab.add("Active").grid()
+
+        tab.grid()
 
 class PunterView(object):
 
@@ -24,58 +90,45 @@ class PunterView(object):
                                        font=ctk.CTkFont(size=20, weight="bold"))
         self.main_label.grid(padx=30, pady=(30, 15))
 
-        self.logout_button = ctk.CTkButton(self.main_frame,
-                                           text="Logout",
-                                           command=self.on_logout_click,
-                                           width=200,
-                                           fg_color="red",
-                                           hover_color="red")
 
         self.tabs = ctk.CTkTabview(self.main_frame)
 
-        self.deposit = self.tabs.add("Deposit")
-        ctk.CTkLabel(self.deposit, text="$").grid(row=0, column=0)
-        self.d_value = ctk.CTkEntry(self.deposit)
-        self.d_value.grid(pady=5, padx=5, row=0, column=1)
-        self.deposit_btn = ctk.CTkButton(self.deposit,
-                                         text="OK",
-                                         command=self.deposit_value).grid(row=0, column=2)
+        self.deposit_tab = DepositTab(self.tabs.add("Deposit"),
+                                      self.deposit_value)
 
-        self.withdraw = self.tabs.add("Withdraw")
-        ctk.CTkLabel(self.withdraw, text="$").grid(row=0, column=0)
-        self.w_value = ctk.CTkEntry(self.withdraw)
-        self.w_value.grid(pady=5, padx=5, row=0, column=1)
-        self.withdraw_btn = ctk.CTkButton(self.withdraw,
-                                          text="OK",
-                                          command=self.withdraw_value).grid(row=0, column=2)
+        self.deposit_tab.grid()
 
-        self.transactions = self.tabs.add("Transaction")
+        self.withdraw_tab = DepositTab(self.tabs.add("Withdraw"),
+                                       self.withdraw_value)
 
-        self.year_entry = ctk.CTkEntry(master=self.transactions, width=300, height=30, placeholder_text="Year")
-        self.year_entry.grid(padx=10)
+        self.withdraw_tab.grid()
 
-        ctk.CTkButton(master=self.transactions,
-                      text="Fetch",
-                      width=300, height=30,
-                      command=self.fetch_transactions,
-                      corner_radius=6).grid(pady=5)
+        self.transaction_tab = TransactionTab(self.tabs.add("Transaction"),
+                                              self.fetch_transactions)
 
-        self.transactions_list = ctk.CTkScrollableFrame(master=self.transactions,
-                                                        width=300, height=30,
-                                                        corner_radius=6)
-        self.transactions_list.grid(pady=5)
+        self.transaction_tab.grid()
+
+        self.bet_tab = BetTab(self.tabs.add("Bet"),
+                              lambda : print("Fetch Fights: Not Implemented Yet."),
+                              lambda : print("Bet on Fight: Not Implemented Yet."))
+
+        self.bet_tab.grid()
 
         self.tabs.grid()
 
-        self.logout_button.grid(padx=30, pady=(15, 15))
+        ctk.CTkButton(self.main_frame,
+                      text="Logout",
+                      command=self.on_logout_click,
+                      width=200,
+                      fg_color="red",
+                      hover_color="red").grid(padx=30, pady=(15, 15))
 
     def fetch_transactions(self):
-        for s in self.transactions_list.grid_slaves():
-            s.destroy()
+        self.transaction_tab.clear()
 
         transactions = self.controller.fetch_transactions(self.punter)
 
-        year = self.year_entry.get()
+        year = self.transaction_tab.year.get()
 
         if year:
             try:
@@ -88,7 +141,7 @@ class PunterView(object):
             if type(year) == int and dt.datetime.fromtimestamp(t.timestamp).year != year:
                 continue
 
-            master = ctk.CTkFrame(self.transactions_list,
+            master = ctk.CTkFrame(self.transaction_tab.transactions,
                                   width=300, height=10,
                                   bg_color="white")
 
@@ -106,10 +159,9 @@ class PunterView(object):
 
             master.grid()
 
-
     def deposit_value(self):
         try:
-            value = float(self.d_value.get())
+            value = float(self.deposit_tab.value.get())
 
             if value < 0.0:
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
@@ -122,7 +174,7 @@ class PunterView(object):
 
     def withdraw_value(self):
         try:
-            value = float(self.w_value.get())
+            value = float(self.withdraw_tab.value.get())
 
             if value > self.punter.wallet.value_available:
                 raise Exception()
@@ -146,7 +198,8 @@ class PunterView(object):
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100) # Show main frame
 
     def update_main_label(self):
-        self.main_label.configure(text=f"Welcome, {self.punter.name}!\nYou have: ${self.punter.wallet.value_available} bonoros.")
+        msg = f"Welcome, {self.punter.name}!\nYou have: ${self.punter.wallet.value_available} bonoros."
+        self.main_label.configure(text=msg)
 
     def on_logout_click(self):
         self.main_frame.grid_forget()
