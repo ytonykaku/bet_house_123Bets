@@ -1,19 +1,7 @@
 from models import Fighter, Bet
 
 class Fight(object):
-    def __init__(self,
-                 date: float,
-                 fA: Fighter, oddA: float,
-                 fB: Fighter, oddB: float,
-                 bets: list[Bet] = list(),
-                 winner: str = "UNKNOWN"):
-        self.date = date
-        self.fA = fA
-        self.oddA = oddA
-        self.fB = fB
-        self.oddB = oddB
-        self.winner = winner
-        self.bets = bets
+
 
     def add_bet(self, bet: Bet) -> None:
         self.bets.append(bet)

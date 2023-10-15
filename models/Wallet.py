@@ -14,4 +14,3 @@ class Wallet(object):
                f' "value_available": {self.value_available},' \
                f' "value_applied": {self.value_applied} ' \
                '}'
-

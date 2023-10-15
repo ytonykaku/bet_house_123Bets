@@ -5,13 +5,13 @@ from models.Fight import Fight
 class Bet(object):
     id_counter = 0
 
-    def __init__(self, value: float, date: float, wallet: Wallet, winner: str, fight: Fight, id: int = 0):
+    def __init__(self, value: float, date: float, wallet: Wallet, winner: str, fight: Fight, odd: float, id: int = 0):
         self.wallet = wallet
         self.value = value
         self.date = date
         self.winner = winner
         self.fight = fight
-        self.odd = None
+        self.odd = odd
 
         if id:
             self.id = id
@@ -28,7 +28,8 @@ class Bet(object):
                f' "value": {self.value}, '\
                f' "date": {self.date}, '\
                f' "winner": "{self.winner}", '\
-               f' "fight": "{repr(self.fight)}" '\
+               f' "fight": "{repr(self.fight)}" ' \
+               f' "odd": "{repr(self.odd)}" ' \
                '}'
 
     def __repr__(self) -> str:
@@ -36,4 +37,5 @@ class Bet(object):
                f' "value": {self.value}, '\
                f' "fight": "{repr(self.fight)}" '\
                '}'
+
 

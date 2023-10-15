@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS Admin (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    login TEXT NOT NULL,
+    password TEXT NOT NULL,
+    utype INTEGER NOT NULL CHECK(utype in (0, 1)) DEFAULT 1,
+    cpf TEXT NOT NULL
+);
+

@@ -41,3 +41,4 @@ class WalletPersistence(object):
                       value_available=data[0],
                       value_applied=data[1])
 
+
