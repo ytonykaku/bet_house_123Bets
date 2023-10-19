@@ -3,8 +3,9 @@ CREATE TABLE IF NOT EXISTS Punter (
 
     profit REAL DEFAULT 0.0,
     loss REAL DEFAULT 0.0,
-    investments TEXT NOT NULL DEFAULT "", -- CSV: Comma Separeted Values,
+    wallet INTEGER NOT NULL,
 
-    FOREIGN KEY(uid) REFERENCES User(id) ON DELETE CASCADE
+    FOREIGN KEY(wallet) REFERENCES WALLET(wid) ON DELETE CASCADE,
+    FOREIGN KEY(uid) REFERENCES User(uid) ON DELETE CASCADE
 );
 

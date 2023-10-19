@@ -5,8 +5,10 @@ import customtkinter as ctk
 import CTkMessagebox
 
 from models.Punter import Punter
-from control.PunterController import PunterController
+
 from models.Transaction import Transaction
+from control.Controller import Controller
+
 
 class DepositTab(ctk.CTkFrame):
 
@@ -77,7 +79,7 @@ class BetTab(ctk.CTkFrame):
 
 class PunterView(object):
 
-    def __init__(self, master: ctk.CTk, controller: PunterController):
+    def __init__(self, master: ctk.CTk, controller: Controller):
         self.controller = controller
 
         self.return_frame: ctk.CTkFrame | None = None
@@ -126,7 +128,7 @@ class PunterView(object):
     def fetch_transactions(self):
         self.transaction_tab.clear()
 
-        transactions = self.controller.fetch_transactions(self.punter)
+        transactions = self.controller.transaction.fetch_transactions(self.punter)
 
         year = self.transaction_tab.year.get()
 
@@ -167,7 +169,7 @@ class PunterView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
                 return
 
-            self.controller.deposit(self.punter, value)
+            self.controller.punter.deposit(self.punter, value)
             self.update_main_label()
         except Exception as _:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
@@ -183,7 +185,7 @@ class PunterView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
                 return
 
-            self.controller.withdraw(self.punter, value)
+            self.controller.punter.withdraw(self.punter, value)
             self.update_main_label()
         except Exception as _:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")

@@ -1,9 +1,9 @@
 from models.Bet import Bet
 
-from persistence.BetPersistence import BetPersistence
+from persistence.Persistence import Persistence
 
 
 class BetController(object):
 
-    def __init__(self, persistence: BetPersistence):
+    def __init__(self, persistence: Persistence):
         self.persistence = persistence

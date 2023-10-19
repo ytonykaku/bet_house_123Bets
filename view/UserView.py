@@ -5,14 +5,14 @@ import CTkMessagebox
 
 from models.User import User
 
-from control.UserController import UserController
+from control.Controller import Controller
 
 from view import Validation
 
 
 class UserView(object):
 
-    def __init__(self, master: ctk.CTk, controller: UserController):
+    def __init__(self, master: ctk.CTk, controller: Controller):
         self.controller = controller
 
         self.main_frame = ctk.CTkFrame(master=master, corner_radius=0, bg_color="transparent")
@@ -44,7 +44,7 @@ class UserView(object):
         username = self.username_entry.get()
         password = self.password_entry.get()
 
-        u: User | None = self.controller.authenticate(username, password)
+        u: User | None = self.controller.user.authenticate(username, password)
 
         self.username_entry.delete(0, len(username))
         self.password_entry.delete(0, len(password))
@@ -118,7 +118,7 @@ class UserView(object):
 
             u = User(name=name, cpf=cpf, email=email, login=username, password=password)
 
-            self.controller.register(u=u)
+            self.controller.user.register(u=u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="You are now registered!", icon="check")
         except:

@@ -8,7 +8,7 @@ from view.fonts import Fonts
 from models.User import User
 from models.Admin import Admin
 
-from control.AdminController import AdminController
+from control.Controller import Controller
 
 class PermissionsTab(ctk.CTkFrame):
 
@@ -65,6 +65,8 @@ class FightersTab(ctk.CTkFrame):
 
         tabs = ctk.CTkTabview(self)
 
+        # -----------------------------------------------------------------------------------------
+
         create_tab = tabs.add("Create")
 
         create_tab.grid()
@@ -79,33 +81,29 @@ class FightersTab(ctk.CTkFrame):
         self.height.grid()
         self.nationality.grid()
 
-        create_tab.grid()
+        ctk.CTkButton(master=create_tab,
+                      text="Create",
+                      width=300, height=30,
+                      command=lambda : print("Not Implemented Yet."),
+                      corner_radius=6,
+                      font=Fonts.button_med_font()).grid(pady=5)
 
-        delete_tab = tabs.add("Delete")
+        # -----------------------------------------------------------------------------------------
 
-        self.name_to_delete = ctk.CTkEntry(delete_tab, width=300, placeholder_text="NAME")
+        find_tab = tabs.add("Find")
 
-        self.name_to_delete.grid()
+        self.name_to_find = ctk.CTkEntry(find_tab, width=300, placeholder_text="NAME")
 
-        ctk.CTkButton(master=delete_tab,
+        self.name_to_find.grid()
+
+        ctk.CTkButton(master=find_tab,
                       text="Fetch",
                       width=300, height=30,
                       command=lambda : print("Not Implemented Yet."),
                       corner_radius=6,
                       font=Fonts.button_med_font()).grid(pady=5)
 
-        update_tab = tabs.add("Update")
-
-        self.name_to_update = ctk.CTkEntry(update_tab, width=300, placeholder_text="NAME")
-
-        self.name_to_update.grid()
-
-        ctk.CTkButton(master=update_tab,
-                      text="Fetch",
-                      width=300, height=30,
-                      command=lambda : print("Not Implemented Yet."),
-                      corner_radius=6,
-                      font=Fonts.button_med_font()).grid(pady=5)
+        # -----------------------------------------------------------------------------------------
 
         tabs.grid()
 
@@ -127,23 +125,17 @@ class FightsTab(ctk.CTkFrame):
 
         create_tab.grid()
 
-        delete_tab = tabs.add("Delete")
+        find_tab = tabs.add("Find")
 
         # TODO: List fights.
 
-        delete_tab.grid()
-
-        update_tab = tabs.add("Update")
-
-        # TODO: List fights.
-
-        update_tab.grid()
+        find_tab.grid()
 
         tabs.grid()
 
 class AdminView(object):
 
-    def __init__(self, master: ctk.CTk, controller: AdminController):
+    def __init__(self, master: ctk.CTk, controller: Controller):
         self.controller = controller
 
         self.main_frame = ctk.CTkFrame(master, corner_radius=0, height=400, width=400)
@@ -154,11 +146,6 @@ class AdminView(object):
         self.main_label.grid(row=0, column=0, padx=30, pady=(30, 15))
 
         tabs = ctk.CTkTabview(self.main_frame)
-
-        self.permissions_tab = PermissionsTab(master=tabs.add("Permissions"),
-                                              elevate_callback=self.elevate_user_by_cpf,
-                                              depress_callback=self.depress_user_by_cpf)
-        self.permissions_tab.grid()
 
         self.users_tab = UsersTab(master=tabs.add("Users"),
                                   fetch_callback=self.fetch_users)
@@ -194,9 +181,9 @@ class AdminView(object):
         users_fetched: list[User] = list()
 
         if cpf == "":
-            users_fetched.extend(self.controller.fetch_users())
+            users_fetched.extend(self.controller.admin.fetch_users())
         else:
-            users_fetched.append(self.controller.fetch_user_by_cpf(cpf))
+            users_fetched.append(self.controller.admin.fetch_user_by_cpf(cpf))
 
         for _, user in enumerate(users_fetched):
             master = ctk.CTkFrame(self.users_tab.users,
@@ -208,11 +195,19 @@ class AdminView(object):
             ctk.CTkLabel(master,
                          width=300,
                          text=f"CPF: {user.cpf}").grid(padx=5, pady=5)
+
             ctk.CTkButton(master,
                           width=300,
                           text="Delete",
-                          fg_color="red",
                           command=lambda user=user: self.delete_user(user)).grid(padx=5, pady=5)
+            ctk.CTkButton(master,
+                          width=300,
+                          text="Elevate",
+                          command=lambda user=user: self.elevate_user(user)).grid(padx=5, pady=5)
+            ctk.CTkButton(master,
+                          width=300,
+                          text="Depress",
+                          command=lambda user=user: self.depress_user(user)).grid(padx=5, pady=5)
 
             master.grid()
 
@@ -222,34 +217,31 @@ class AdminView(object):
             return
 
         if u.utype == 0:
-            if self.controller.has_money_or_bets(u):
+            if self.controller.admin.has_money_or_bets(u):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete user with money or bets on the system.", icon="cancel")
                 return
 
-        self.controller.delete_user(u)
+        self.controller.admin.delete_user(u)
         self.fetch_users()
 
-    def on_logout_click(self):
-        self.main_frame.grid_forget()
-        self.post_logout_callback()
-
-    def elevate_user_by_cpf(self):
-        cpf = self.permissions_tab.cpf.get()
-
+    def depress_user(self, u: User):
         try:
-            self.controller.elevate_by_cpf(cpf)
+            self.controller.admin.depress_by_cpf(u.cpf)
+
+            CTkMessagebox.CTkMessagebox(title="OK", message="Depression executed with sucess.", icon="check")
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Depression failed to execut.", icon="cancel")
+
+    def elevate_user(self, u: User):
+        try:
+            self.controller.admin.elevate_by_cpf(u.cpf)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="Elevation executed with sucess.", icon="check")
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Elevation failed to execut.", icon="cancel")
 
-    def depress_user_by_cpf(self):
-        cpf = self.permissions_tab.cpf.get()
 
-        try:
-            self.controller.depress_by_cpf(cpf)
-
-            CTkMessagebox.CTkMessagebox(title="OK", message="Depression executed with sucess.", icon="check")
-        except:
-            CTkMessagebox.CTkMessagebox(title="ERROR", message="Depression failed to execut.", icon="cancel")
+    def on_logout_click(self):
+        self.main_frame.grid_forget()
+        self.post_logout_callback()
 

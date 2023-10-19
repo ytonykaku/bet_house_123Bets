@@ -1,7 +1,7 @@
 from persistence.Persistence import Persistence
 
 
-class TransactionController(object):
+class InvestmentController(object):
 
     def __init__(self, persistence: Persistence):
         self.persistence = persistence

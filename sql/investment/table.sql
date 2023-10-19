@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS Investment (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    wallet INTEGER NOT NULL,
+    bet INTEGER NOT NULL,
+
+    FOREIGN KEY(wallet) REFERENCES Wallet(wid),
+    FOREIGN KEY(bet) REFERENCES Bet(bid)
+);
+
