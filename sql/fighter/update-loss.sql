@@ -1,6 +1,6 @@
 UPDATE
 Fighter
 SET
-loss = loss + (?)
+loss = loss + ?
 WHERE
-fid = {fid}
+name = ?;

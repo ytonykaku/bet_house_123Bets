@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Fighter (
-    name TEXT PRIMARY KEY,
+    name TEXT UNIQUE PRIMARY KEY,
 
     category TEXT,
     height REAL,

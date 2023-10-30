@@ -1,2 +1,2 @@
-INSERT INTO Fighter (fid, name, category, height, nationality, wins, loss)
-             VALUES(  ?,     ?,     ?,    ?,    ?,  ?,  ?);
+INSERT INTO Fighter (name, category, height, nationality)
+             VALUES (   ?,        ?,      ?,           ?);
