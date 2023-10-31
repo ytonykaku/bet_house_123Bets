@@ -12,19 +12,14 @@ class UserPersistence(object):
 
         self.queries = utils.create_operations_dict(
             operations=[ "insert",
-                         "delete-by-id",
-                         "select-auth-info",
-                         "fetch-users",
-                         "fetch-user-by-cpf",
-                         "update",
-                         "elevate-by-cpf",
-                         "depress-by-cpf",
-                         "select-by-id" ],
+                         "delete",
+                         "fetch",
+                         "update-utype" ],
             SQL_BASE_PATH=os.path.join("sql", "user")
         )
 
         with open(os.path.join("sql", "user", "table.sql")) as f:
-            cursor.execute(f.read())
+            cursor.executescript(f.read())
 
     def insert(self, u: User):
         self.db_cursor.execute(
@@ -34,72 +29,21 @@ class UserPersistence(object):
 
         u.id = self.db_cursor.lastrowid
 
-    def get_auth_info(self, login: str) -> tuple[int, str] | None:
-        return self.db_cursor.execute(
-            self.queries["select-auth-info"],
-            (login, )
-        ).fetchone()
-
-    def elevate_by_cpf(self, cpf: str):
-        self.db_cursor.executescript(
-            self.queries["elevate-by-cpf"].format(cpf=cpf),
-        )
-
-    def depress_by_cpf(self, cpf: str):
-        self.db_cursor.executescript(
-            self.queries["depress-by-cpf"].format(cpf=cpf),
-        )
-
-    def fetch_users(self):
-        user_data: list[tuple[int, str, str, str, str, int]] = self.db_cursor.execute(
-            self.queries["fetch-users"]
-        ).fetchall()
+    def read(self):
+        user_data = self.db_cursor.execute(self.queries["fetch"]).fetchall()
 
         return [
-            User(name=name, login=login, cpf=cpf, email=email, utype=utype, id=id)
+            User(name=name, login=login, password=password, cpf=cpf, email=email, utype=utype)
             for
-            id, name, login, cpf, email, utype
+            name, login, password, cpf, email, utype
             in
             user_data
-         ]
+        ]
 
-    def fetch_user_by_cpf(self, cpf: str) -> User:
-        try:
-            id, name, login, cpf, email, utype = self.db_cursor.execute(
-                self.queries["fetch-user-by-cpf"],
-                { "cpf": cpf }
-            ).fetchone()
-        except:
-            return None
+    def delete(self, user: User):
+        self.db_cursor.execute(self.queries["delete"], (user.cpf, ))
 
-        return User(name=name, login=login, cpf=cpf, email=email, utype=utype, id=id)
-
-
-    def delete_by_id(self, id: int):
-        self.db_cursor.execute(
-            self.queries["delete-by-id"],
-            (id, )
+    def update_utype(self, user: User):
+        self.db_cursor.executescript(
+            self.queries["elevate-by-cpf"].format(cpf=user.cpf, utype=user.utype),
         )
-
-    def get_by_id(self, id: int) -> User:
-        user_data: tuple[str, str, str, str, int] = self.db_cursor.execute(
-            self.queries["select-by-id"], (id, )
-        ).fetchone()
-
-        return User(name=user_data[0],
-                    cpf=user_data[1],
-                    email=user_data[2],
-                    login=user_data[3],
-                    utype=user_data[4],
-                    id=id)
-
-    def update(self, u: User, new_values: dict):
-        """
-        :param u: Users that will have values updated. The selection happens by id, so make sure it is valid.
-        :param new_values: The value of should be inserted as it was written in the sql script. Example:
-        { "name" = '"NEW NAME"'}. Note the double quotes inside the string.
-        """
-        assignments_as_list = [ f"{k} = {v}" for k, v in new_values.items() ]
-        assignments_as_str = ", ".join(assignments_as_list)
-        self.db_cursor.execute(self.queries["update"].format(assignments=assignments_as_str), (u.id,))
-

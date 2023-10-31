@@ -1,12 +1,21 @@
 CREATE TABLE IF NOT EXISTS PTransaction (
-    tid INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    wid INTEGER NOT NULL,
+    wallet TEXT NOT NULL,
 
     ttype INTEGER NOT NULL,
     value REAL NOT NULL,
     timestamp REAL NOT NULL,
 
-    FOREIGN KEY(wid) REFERENCES Wallet(wid) ON DELETE CASCADE
+    PRIMARY KEY(wallet, ttype, timestamp)
+
+    FOREIGN KEY(wallet) REFERENCES Wallet(cpf_owner) ON DELETE CASCADE
 );
 
+CREATE TRIGGER IF NOT EXISTS wallet_transaction AFTER INSERT ON PTransaction
+BEGIN
+    UPDATE
+        Wallet
+    SET
+        available = available + new.value
+    WHERE
+        cpf_owner = new.wallet;
+END;

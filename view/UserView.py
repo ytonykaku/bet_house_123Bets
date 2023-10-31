@@ -121,7 +121,8 @@ class UserView(object):
             self.controller.user.register(u=u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="You are now registered!", icon="check")
-        except:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Failed to register.", icon="cancel")
             return
 

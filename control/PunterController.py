@@ -12,29 +12,18 @@ class PunterController(object):
     def __init__(self, persistence: Persistence):
         self.persistence = persistence
 
-    def get_from_user(self, user: User) -> Punter:
-        w = self.persistence.wallet.get_by_id(user.id)
+    def get_from_user(self, user: User) -> Punter | None:
+        punters = self.persistence.punter.read()
+        p = next(filter(lambda p: p.cpf==user.cpf, punters), None)
 
-        p = Punter(name=user.name,
-                   cpf=user.cpf,
-                   email=user.email,
-                   login=user.login,
-                   uid=user.id,
-                   wallet=w)
+        if p:
+            transactions = self.persistence.transaction.read(p)
 
-        self.persistence.punter.get_profit_and_loss(p)
+            transactions.sort(key=lambda t: t.timestamp, reverse=True)
+
+            p.wallet.transactions.extend(transactions)
 
         return p
-
-    def deposit(self, p: Punter, value: float):
-        t = Transaction(p, value, Transaction.DEPOSIT, dt.datetime.now().timestamp())
-        self.persistence.wallet.deposit(p.wallet, value)
-        self.persistence.transaction.insert(t)
-
-    def withdraw(self, p: Punter, value: float):
-        t = Transaction(p, value, Transaction.WITHDRAW, dt.datetime.now().timestamp())
-        self.persistence.wallet.withdraw(p.wallet, value)
-        self.persistence.transaction.insert(t)
 
     def fetch_transactions(self, p: Punter) -> list[Transaction]:
         return self.persistence.transaction.fetch(p)

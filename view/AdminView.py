@@ -249,7 +249,7 @@ class AdminView(object):
             master.grid()
 
     def delete_user(self, u: User):
-        if u.id == self.current_admin.id:
+        if u.cpf == self.current_admin.cpf:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete connected user.", icon="cancel")
             return
 
@@ -258,12 +258,12 @@ class AdminView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete user with money or bets on the system.", icon="cancel")
                 return
 
-        self.controller.admin.delete_user(u)
+        self.controller.admin.delete(u)
         self.fetch_users()
 
     def depress_user(self, u: User):
         try:
-            self.controller.admin.depress_by_cpf(u.cpf)
+            self.controller.admin.depress(u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="Depression executed with sucess.", icon="check")
         except:
@@ -271,7 +271,7 @@ class AdminView(object):
 
     def elevate_user(self, u: User):
         try:
-            self.controller.admin.elevate_by_cpf(u.cpf)
+            self.controller.admin.elevate(u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="Elevation executed with sucess.", icon="check")
         except:

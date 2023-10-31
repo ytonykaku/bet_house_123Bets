@@ -1,2 +1,2 @@
-INSERT INTO Punter (uid)
+INSERT INTO Punter (cpf)
             VALUES (  ?);

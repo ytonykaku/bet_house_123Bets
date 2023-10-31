@@ -1,2 +1,2 @@
-INSERT INTO Admin (uid)
+INSERT INTO Admin  (cpf)
             VALUES (  ?);

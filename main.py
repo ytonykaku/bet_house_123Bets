@@ -79,7 +79,6 @@ class App(object):
         match u.utype:
             case 0:
                 p: Punter = self.controller.punter.get_from_user(u)
-                p.wallet = self.controller.wallet.get_by_id(p.id)
                 self.punter_view.activate_view(user=p, post_logout_callback=self.post_logout)
 
             case 1:

@@ -10,14 +10,12 @@ class Punter(User):
                  password: str = "",
                  wallet: Wallet | None = None,
                  profit: float = 0.0,
-                 loss: float = 0.0,
-                 uid: int = 0):
+                 loss: float = 0.0):
         super().__init__(name=name,
                          cpf=cpf,
                          email=email,
                          login=login,
-                         password=password,
-                         id=uid)
+                         password=password)
         self.wallet = wallet
         self.profit = profit
         self.loss = loss

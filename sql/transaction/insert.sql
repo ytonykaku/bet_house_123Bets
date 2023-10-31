@@ -1,2 +1,2 @@
-INSERT INTO PTransaction(pid, ttype, value, timestamp)
-                  VALUES(  ?,     ?,     ?,         ?);
+INSERT INTO PTransaction(wallet, ttype, value, timestamp)
+                  VALUES(     ?,     ?,     ?,         ?);

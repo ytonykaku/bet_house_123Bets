@@ -4,6 +4,7 @@ import sqlite3 as sql3
 from persistence import utils
 
 from models.Punter import Punter
+from models.Wallet import Wallet
 from models.Transaction import Transaction
 
 
@@ -19,22 +20,21 @@ class TransactionPersistence(object):
         )
 
         with open(os.path.join("sql", "transaction", "table.sql")) as f:
-            cursor.execute(f.read())
+            cursor.executescript(f.read())
 
-    def insert(self, t: Transaction):
+    def insert(self, w: Wallet, t: Transaction):
         self.db_cursor.execute(
             self.queries["insert"],
-            (t.owner.id, t.ttype, t.value, t.timestamp)
+            (w.cpf_owner, t.ttype, t.value, t.timestamp)
         )
+        value = t.value if t.ttype == Transaction.DEPOSIT else -t.value
+        w.value_available = w.value_available + value
 
-    def fetch(self, p: Punter) -> list[Transaction]:
-        transactions: list[tuple[int, int, float, float]] = self.db_cursor.execute(
-            self.queries["fetch"],
-            { "punter_id": p.id }
-        ).fetchall()
+    def read(self, p: Punter) -> list[Transaction]:
+        transactions = self.db_cursor.execute(self.queries["fetch"], (p.cpf, )).fetchall()
 
         return [
-            Transaction(p=p, value=value, ttype=ttype, timestamp=timestamp, id=id)
-            for id, ttype, value, timestamp in transactions
+            Transaction(value=value, ttype=ttype, timestamp=timestamp)
+            for ttype, value, timestamp in transactions
         ]
 

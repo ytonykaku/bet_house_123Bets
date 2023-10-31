@@ -4,6 +4,7 @@ import sqlite3 as sql3
 from persistence import utils
 
 from models.Punter import Punter
+from models.Wallet import Wallet
 
 
 class PunterPersistence(object):
@@ -13,12 +14,13 @@ class PunterPersistence(object):
 
         self.queries = utils.create_operations_dict(
             operations=[ "insert",
+                         "fetch",
                          "select-profit-and-loss" ],
             SQL_BASE_PATH=os.path.join("sql", "punter")
         )
 
         with open(os.path.join("sql", "punter", "table.sql")) as f:
-            cursor.execute(f.read())
+            cursor.executescript(f.read())
 
     def insert(self, p: Punter):
         self.db_cursor.execute(
@@ -28,12 +30,20 @@ class PunterPersistence(object):
 
         p.wallet.id = self.db_cursor.lastrowid
 
-    def get_profit_and_loss(self, p: Punter):
-        profit, loss =self.db_cursor.execute(
-            self.queries["select-profit-and-loss"],
-            (p.id,)
-        ).fetchone()
+    def read(self):
+        punters = self.db_cursor.execute(self.queries["fetch"]).fetchall()
 
-        p.profit = profit
-        p.loss = loss
-
+        return [
+            Punter(name=name,
+                   cpf=cpf,
+                   email=email,
+                   login=login,
+                   password=password,
+                   profit=profit,
+                   loss=loss,
+                   wallet=Wallet(cpf_owner=cpf, value_available=available, value_applied=applied))
+            for
+            name, login, password, cpf, email, utype, profit, loss, available, applied
+            in
+            punters
+        ]

@@ -16,20 +16,22 @@ class AdminController(object):
                      login=user.login,
                      uid=user.id)
 
-    def elevate_by_cpf(self, cpf: str) -> None:
-        self.persistence.user.elevate_by_cpf(cpf=cpf)
+    def elevate(self, user: User) -> None:
+        user.utype = 1
+        self.persistence.user.update_utype(user)
 
-    def depress_by_cpf(self, cpf: str) -> None:
-        self.persistence.user.depress_by_cpf(cpf=cpf)
+    def depress(self, user: User) -> None:
+        user.utype = 0
+        self.persistence.user.update_utype(user)
 
-    def fetch_users(self) -> list[User]:
-        return self.persistence.user.fetch_users()
+    def fetch(self) -> list[User]:
+        return self.persistence.user.read()
 
-    def fetch_user_by_cpf(self, cpf: str) -> User:
-        return self.persistence.user.fetch_user_by_cpf(cpf)
+    def fetch_by_cpf(self, cpf: str) -> User:
+        return filter(lambda user: user.cpf == cpf, self.persistence.user.read())
 
-    def delete_user(self, u: User):
-        self.persistence.user.delete_by_id(id=u.id)
+    def delete(self, u: User):
+        self.persistence.user.delete(u)
 
     def has_money_or_bets(self, u: User):
         return self.persistence.wallet.get_by_id(id=u.id).value_available != 0.0

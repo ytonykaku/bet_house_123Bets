@@ -128,8 +128,6 @@ class PunterView(object):
     def fetch_transactions(self):
         self.transaction_tab.clear()
 
-        transactions = self.controller.transaction.fetch_transactions(self.punter)
-
         year = self.transaction_tab.year.get()
 
         if year:
@@ -139,7 +137,7 @@ class PunterView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid year.", icon="cancel")
                 return
 
-        for t in transactions:
+        for t in self.punter.wallet.transactions:
             if type(year) == int and dt.datetime.fromtimestamp(t.timestamp).year != year:
                 continue
 
@@ -169,9 +167,15 @@ class PunterView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
                 return
 
-            self.controller.punter.deposit(self.punter, value)
+            t = Transaction(value, Transaction.DEPOSIT, dt.datetime.now().timestamp())
+
+            self.controller.transaction.create(self.punter.wallet, t)
+
+            self.punter.wallet.transactions.append(t)
+
             self.update_main_label()
-        except Exception as _:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def withdraw_value(self):
@@ -185,9 +189,15 @@ class PunterView(object):
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Only positive values.", icon="cancel")
                 return
 
-            self.controller.punter.withdraw(self.punter, value)
+            t = Transaction( value, Transaction.WITHDRAW, dt.datetime.now().timestamp())
+
+            self.controller.transaction.create(self.punter.wallet, t)
+
+            self.punter.wallet.transactions.append(t)
+
             self.update_main_label()
-        except Exception as _:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def activate_view(self, user: Punter, post_logout_callback: t.Callable[..., None]):
@@ -206,4 +216,3 @@ class PunterView(object):
     def on_logout_click(self):
         self.main_frame.grid_forget()
         self.post_logout_callback()
-

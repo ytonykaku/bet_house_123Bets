@@ -8,9 +8,7 @@ class User(object):
                  email: str,
                  login: str,
                  password: str = "",
-                 utype: int = 0,
-                 id: int = 0):
-        self.id = id
+                 utype: int = 0):
         self.name = name
         self.cpf = cpf
         self.email = email

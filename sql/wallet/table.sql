@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS Wallet (
-    available REAL NOT NULL,
-    applied REAL NOT NULL
-);
+    cpf_owner TEXT UNIQUE PRIMARY KEY,
+    available REAL DEFAULT 0.0,
+    applied REAL DEFAULT 0.0,
 
+    FOREIGN KEY(cpf_owner) REFERENCES Punter(cpf) ON DELETE CASCADE
+);

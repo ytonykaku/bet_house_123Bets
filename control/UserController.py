@@ -1,8 +1,4 @@
 from models.User import User
-from models.Admin import Admin
-from models.Punter import Punter
-from models.Wallet import Wallet
-
 from persistence.Persistence import Persistence
 
 
@@ -12,29 +8,8 @@ class UserController(object):
         self.persistence = persistence
 
     def authenticate(self, login: str, password: str) -> User | None:
-        out = self.persistence.user.get_auth_info(login=login)
-
-        if out is None:
-            return None
-
-        id, truth_password = out
-
-        if password != truth_password:
-            return None
-
-        return self.persistence.user.get_by_id(id=id)
+        users = self.persistence.user.read()
+        return next(filter(lambda u: u.login == login and u.password == password, users), None)
 
     def register(self, u: User):
         self.persistence.user.insert(u)
-
-        match u.utype:
-            case 0:
-                w = Wallet()
-                p = Punter(name=u.name, cpf=u.cpf, login=u.login, password=u.password, email=u.email, wallet=w, uid=u.id)
-
-                self.persistence.punter.insert(p)
-                self.persistence.wallet.insert(w)
-            case 1:
-                a = Admin(name=u.name, cpf=u.cpf, login=u.login, password=u.password, email=u.email, uid=u.id)
-                self.persistence.admin.insert(a)
-
