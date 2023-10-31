@@ -1,7 +1,6 @@
 import sqlite3 as sql3
 
 import customtkinter as ctk
-from control.BetController import BetController
 
 from models.User import User
 from models.Admin import Admin
@@ -29,6 +28,7 @@ from control.UserController import UserController
 from control.AdminController import AdminController
 from control.PunterController import PunterController
 from control.WalletController import WalletController
+from control.BetController import BetController
 from control.TransactionController import TransactionController
 from control.InvestmentController import InvestmentController
 from control.FightController import FightController

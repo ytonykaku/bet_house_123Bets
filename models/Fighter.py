@@ -34,3 +34,6 @@ class Fighter(object):
     def __repr__(self) -> str:
         return self.name
 
+    def __eq__(self, other):
+        return self.name == other.name
+

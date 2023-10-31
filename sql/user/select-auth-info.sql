@@ -1,5 +1,5 @@
 SELECT
-id, password
+uid, password
 FROM
 User
 WHERE

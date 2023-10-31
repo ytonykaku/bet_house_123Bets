@@ -1,4 +1,4 @@
 SELECT
-id, name, login, cpf, email, utype
+uid, name, login, cpf, email, utype
 FROM
 User;

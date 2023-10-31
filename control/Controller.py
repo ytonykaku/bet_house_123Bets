@@ -30,4 +30,3 @@ class Controller(object):
          self.investment = investment
          self.fighter = fighter
          self.fight = fight
-

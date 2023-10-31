@@ -3,5 +3,5 @@ User
 SET
 {assignments}
 WHERE
-id = ?;
+uid = ?;
 
