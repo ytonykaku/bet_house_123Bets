@@ -9,21 +9,30 @@ CREATE TABLE IF NOT EXISTS User (
     password TEXT NOT NULL
 );
 
-CREATE TRIGGER if NOT EXISTS punter_registration AFTER INSERT ON User
+CREATE TRIGGER IF NOT EXISTS user_protection BEFORE DELETE ON User
+FOR EACH ROW
+WHEN EXISTS (SELECT 1
+             FROM Wallet w
+             WHERE w.cpf_owner = OLD.cpf AND (w.available > 0 OR w.applied > 0))
+BEGIN
+    SELECT RAISE(ABORT, 'Can not delete user with value in wallet.');
+END;
+
+CREATE TRIGGER IF NOT EXISTS punter_registration AFTER INSERT ON User
 WHEN new.utype = 0
 BEGIN
     INSERT INTO Punter (    cpf)
                 VALUES (new.cpf);
 END;
 
-CREATE TRIGGER if NOT EXISTS admin_registration AFTER INSERT ON User
+CREATE TRIGGER IF NOT EXISTS admin_registration AFTER INSERT ON User
 WHEN new.utype = 1
 BEGIN
     INSERT INTO Admin  (    cpf)
                 VALUES (new.cpf);
 END;
 
-CREATE TRIGGER if NOT EXISTS depression AFTER UPDATE OF utype ON User
+CREATE TRIGGER IF NOT EXISTS depression AFTER UPDATE OF utype ON User
 WHEN new.utype = 0
 BEGIN
     DELETE FROM Admin WHERE cpf = new.cpf;
@@ -32,7 +41,7 @@ BEGIN
                           VALUES (new.cpf);
 END;
 
-CREATE TRIGGER if NOT EXISTS elevation AFTER UPDATE OF utype ON User
+CREATE TRIGGER IF NOT EXISTS elevation AFTER UPDATE OF utype ON User
 WHEN new.utype = 1
 BEGIN
     DELETE FROM Punter WHERE cpf = new.cpf;

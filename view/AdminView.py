@@ -216,7 +216,7 @@ class AdminView(object):
         users_fetched: list[User] = list()
 
         if cpf == "":
-            users_fetched.extend(self.controller.admin.fetch_users())
+            users_fetched.extend(self.controller.admin.fetch())
         else:
             u = self.controller.admin.fetch_user_by_cpf(cpf)
             if u:
@@ -253,13 +253,12 @@ class AdminView(object):
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete connected user.", icon="cancel")
             return
 
-        if u.utype == 0:
-            if self.controller.admin.has_money_or_bets(u):
-                CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete user with money or bets on the system.", icon="cancel")
-                return
-
-        self.controller.admin.delete(u)
-        self.fetch_users()
+        try:
+            self.controller.admin.delete(u)
+            CTkMessagebox.CTkMessagebox(title="OK", message="Deletion executed with sucess.", icon="check")
+            self.fetch_users()
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete user with money or bets.", icon="cancel")
 
     def depress_user(self, u: User):
         try:

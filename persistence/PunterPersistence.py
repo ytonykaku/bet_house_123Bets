@@ -13,22 +13,12 @@ class PunterPersistence(object):
         self.db_cursor = cursor
 
         self.queries = utils.create_operations_dict(
-            operations=[ "insert",
-                         "fetch",
-                         "select-profit-and-loss" ],
+            operations=[ "fetch" ],
             SQL_BASE_PATH=os.path.join("sql", "punter")
         )
 
         with open(os.path.join("sql", "punter", "table.sql")) as f:
             cursor.executescript(f.read())
-
-    def insert(self, p: Punter):
-        self.db_cursor.execute(
-            self.queries["insert"],
-            (p.id,)
-        )
-
-        p.wallet.id = self.db_cursor.lastrowid
 
     def read(self):
         punters = self.db_cursor.execute(self.queries["fetch"]).fetchall()

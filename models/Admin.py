@@ -8,12 +8,11 @@ class Admin(User):
                  cpf: str,
                  email:str,
                  login: str,
-                 password: str = "",
-                 uid: int = 0):
+                 password: str):
         super().__init__(name=name,
                          cpf=cpf,
                          email=email,
                          login=login,
                          password=password,
-                         id=uid, utype=1)
+                         utype=1)
 

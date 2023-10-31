@@ -174,8 +174,7 @@ class PunterView(object):
             self.punter.wallet.transactions.append(t)
 
             self.update_main_label()
-        except Exception as e:
-            print(e)
+        except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def withdraw_value(self):
@@ -196,8 +195,7 @@ class PunterView(object):
             self.punter.wallet.transactions.append(t)
 
             self.update_main_label()
-        except Exception as e:
-            print(e)
+        except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
 
     def activate_view(self, user: Punter, post_logout_callback: t.Callable[..., None]):

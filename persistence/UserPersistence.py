@@ -27,8 +27,6 @@ class UserPersistence(object):
             (u.name, u.login, u.password, u.cpf, u.email, u.utype)
         )
 
-        u.id = self.db_cursor.lastrowid
-
     def read(self):
         user_data = self.db_cursor.execute(self.queries["fetch"]).fetchall()
 

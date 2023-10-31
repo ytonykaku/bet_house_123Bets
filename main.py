@@ -39,7 +39,6 @@ class App(object):
     def __init__(self):
         self.conn, cursor = self.create_db()
 
-
         persistence = Persistence(user=UserPersistence(cursor=cursor),
                                   punter=PunterPersistence(cursor=cursor),
                                   wallet=WalletPersistence(cursor=cursor),
@@ -63,8 +62,8 @@ class App(object):
         try:
             a = Admin(name="Admin", cpf="00000000000", login="admin", password="admin", email="admin@example.com")
             persistence.user.insert(a)
-            persistence.admin.insert(a)
-        except: pass
+        except:
+            pass
 
         self.master = ctk.CTk()
         self.master.title("123bets")

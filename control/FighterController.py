@@ -15,11 +15,8 @@ class FighterController(object):
         return self.persistence.fighter.read()
 
     def fetch_by_name(self, name: str):
-        for fighter in self.persistence.fighter.read():
-            if fighter.name == name:
-                return fighter
-
-        return None
+        fighters = self.persistence.fighter.read()
+        return next(filter(lambda f: f.name == name, fighters), None)
 
     def delete(self, name: str):
         self.persistence.fighter.delete(name)
