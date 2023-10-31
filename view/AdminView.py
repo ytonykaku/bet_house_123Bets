@@ -113,6 +113,11 @@ class FightersTab(ctk.CTkFrame):
         for s in self.fighters.grid_slaves():
             s.destroy()
 
+        self.name_to_create.delete(0, len(self.name_to_create.get()))
+        self.category.delete(0, len(self.category.get()))
+        self.height.delete(0, len(self.height.get()))
+        self.nationality.delete(0, len(self.nationality.get()))
+
 class FightsTab(ctk.CTkFrame):
 
     def __init__(self, master, create_callback, fetch_callback, **kwargs):
@@ -163,6 +168,11 @@ class FightsTab(ctk.CTkFrame):
         for s in self.fights.grid_slaves():
             s.destroy()
 
+        self.fighterA.delete(0, len(self.fighterA.get()))
+        self.fighterB.delete(0, len(self.fighterB.get()))
+        self.oddFighterA.delete(0, len(self.oddFighterA.get()))
+        self.oddFighterB.delete(0, len(self.oddFighterB.get()))
+
 class AdminView(object):
 
     def __init__(self, master: ctk.CTk, controller: Controller):
@@ -199,155 +209,6 @@ class AdminView(object):
                       fg_color="red",
                       hover_color="red").grid(row=3, column=0, padx=30, pady=(15, 15))
 
-    def delete_fight(self, fight: Fight):
-        # TODO: Check if fight has bets.
-        self.controller.fight.delete(fight)
-        CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")
-        self.fetch_fights()
-
-    def create_fighter(self):
-        try:
-            f = Fighter(name=self.fighters_tab.name_to_create.get(),
-                        category=self.fighters_tab.category.get(),
-                        height=float(self.fighters_tab.height.get()),
-                        nationality=self.fighters_tab.nationality.get(),
-                        n_wins=0,
-                        n_loss=0)
-
-            self.controller.fighter.create_fighter(f=f)
-        except:
-            CTkMessagebox.CTkMessagebox(title="ERROR", message="Failed to creater fighter.", icon="cancel")
-            return
-
-        self.fighters_tab.name_to_create.delete(0, len(self.fighters_tab.name_to_create.get()))
-        self.fighters_tab.category.delete(0, len(self.fighters_tab.category.get()))
-        self.fighters_tab.height.delete(0, len(self.fighters_tab.height.get()))
-        self.fighters_tab.nationality.delete(0, len(self.fighters_tab.nationality.get()))
-
-        CTkMessagebox.CTkMessagebox(title="OK", message="Fighter created with sucess.", icon="check")
-
-    def create_fight(self):
-        try:
-            fA = self.controller.fighter.fetch_fighter_by_name(self.fights_tab.fighterA.get())
-
-            if not fA:
-                CTkMessagebox.CTkMessagebox(title="ERROR", message="Fighter A not found.", icon="cancel")
-                return
-
-            fB = self.controller.fighter.fetch_fighter_by_name(self.fights_tab.fighterB.get())
-
-            if not fB:
-                CTkMessagebox.CTkMessagebox(title="ERROR", message="Fighter B not found.", icon="cancel")
-                return
-
-            if fA == fB:
-                CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide different fighters.", icon="cancel")
-                return
-
-            oddA = self.fights_tab.oddFighterA.get()
-            oddB = self.fights_tab.oddFighterB.get()
-
-            self.controller.fight.create_fight(Fight(fA, oddA, fB, oddB))
-
-            CTkMessagebox.CTkMessagebox(title="OK", message="Fight created with success.", icon="check")
-        except:
-            CTkMessagebox.CTkMessagebox(title="ERROR", message="Could not create this fight.", icon="cancel")
-        finally:
-            self.fights_tab.fighterA.delete(0, len(self.fights_tab.fighterA.get()))
-            self.fights_tab.fighterB.delete(0, len(self.fights_tab.fighterB.get()))
-            self.fights_tab.oddFighterA.delete(0, len(self.fights_tab.oddFighterA.get()))
-            self.fights_tab.oddFighterB.delete(0, len(self.fights_tab.oddFighterB.get()))
-
-    def fetch_fights(self):
-        self.fights_tab.clear()
-
-        fights = self.controller.fight.fetch_fights()
-
-        for _, fight in enumerate(fights):
-            master = ctk.CTkFrame(self.fights_tab.fights,
-                                  width=300, height=10,
-                                  bg_color="white")
-
-            text = f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
-                   f"\nX\n" + \
-                   f"Name:{fight.fB.name}\nOdd:{fight.oddB}\nCategory:{fight.fB.category}\nHeight:{fight.fB.height}m"
-
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=text).grid(padx=5, pady=5)
-
-            ctk.CTkButton(master,
-                          width=300,
-                          text="Delete",
-                          command=lambda fight=fight: self.delete_fight(fight)).grid(padx=5, pady=5)
-
-            ctk.CTkButton(master,
-                          width=300,
-                          text=f"Declare {fight.fA.name} Winner",
-                          command=lambda : self.declare_winner(fight, fight.fA)).grid(padx=5, pady=5)
-
-            ctk.CTkButton(master,
-                          width=300,
-                          text=f"Declare {fight.fB.name} Winner",
-                          command=lambda : self.declare_winner(fight, fight.fB)).grid(padx=5, pady=5)
-
-            master.grid()
-
-    def declare_winner(self, fight: Fight, fighter: Fighter):
-        self.controller.fight.declare_winner(fight, fighter)
-        CTkMessagebox.CTkMessagebox(title="OK", message="Fight finished with success.", icon="check")
-        self.fetch_fighters()
-
-    def fetch_fighters(self):
-        self.fighters_tab.clear()
-
-        name = self.fighters_tab.name_to_find.get()
-
-        fighters_fetched: list[Fighter] = list()
-
-        if name == "":
-            fighters_fetched.extend(self.controller.fighter.fetch_fighters())
-        else:
-            f = self.controller.fighter.fetch_fighter_by_name(name)
-            if f:
-                fighters_fetched.append(f)
-
-        for _, fighter in enumerate(fighters_fetched):
-            master = ctk.CTkFrame(self.fighters_tab.fighters,
-                                  width=300, height=10,
-                                  bg_color="white")
-
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Name: {str(fighter.name)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Nationality: {str(fighter.height)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Category: {str(fighter.category)}").grid(padx=5, pady=5)
-
-            ctk.CTkButton(master,
-                          width=300,
-                          text="Delete",
-                          command=lambda fighter=fighter: self.delete_fighter(fighter)).grid(padx=5, pady=5)
-
-            master.grid()
-
-    def delete_fighter(self, f: Fighter):
-        # TODO: check if in any fights not finished.
-        self.controller.fighter.delete_fighter_by_name(f.name)
-        CTkMessagebox.CTkMessagebox(title="OK", message="Fighter deleted with success.", icon="check")
-        self.fetch_fighters()
-
-    def activate_view(self, user: Admin, post_logout_callback: t.Callable[..., None]):
-        self.current_admin = user
-        self.post_logout_callback = post_logout_callback
-
-        self.main_label.configure(text=f"Welcome, [ADMIN] {str(user)}!")
-
-        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=50)
-
     def fetch_users(self):
         self.users_tab.clear()
 
@@ -358,7 +219,9 @@ class AdminView(object):
         if cpf == "":
             users_fetched.extend(self.controller.admin.fetch_users())
         else:
-            users_fetched.append(self.controller.admin.fetch_user_by_cpf(cpf))
+            u = self.controller.admin.fetch_user_by_cpf(cpf)
+            if u:
+                users_fetched.append(u)
 
         for _, user in enumerate(users_fetched):
             master = ctk.CTkFrame(self.users_tab.users,
@@ -414,6 +277,155 @@ class AdminView(object):
             CTkMessagebox.CTkMessagebox(title="OK", message="Elevation executed with sucess.", icon="check")
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Elevation failed to execut.", icon="cancel")
+
+    def create_fighter(self):
+        try:
+            f = Fighter(name=self.fighters_tab.name_to_create.get(),
+                        category=self.fighters_tab.category.get(),
+                        height=float(self.fighters_tab.height.get()),
+                        nationality=self.fighters_tab.nationality.get(),
+                        n_wins=0,
+                        n_loss=0)
+
+            self.controller.fighter.create_fighter(f=f)
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Failed to creater fighter.", icon="cancel")
+            return
+
+        self.fighters_tab.clear()
+
+        CTkMessagebox.CTkMessagebox(title="OK", message="Fighter created with sucess.", icon="check")
+
+    def create_fight(self):
+        try:
+            fA = self.controller.fighter.fetch_fighter_by_name(self.fights_tab.fighterA.get())
+
+            if not fA:
+                CTkMessagebox.CTkMessagebox(title="ERROR", message="Fighter A not found.", icon="cancel")
+                return
+
+            fB = self.controller.fighter.fetch_fighter_by_name(self.fights_tab.fighterB.get())
+
+            if not fB:
+                CTkMessagebox.CTkMessagebox(title="ERROR", message="Fighter B not found.", icon="cancel")
+                return
+
+            if fA == fB:
+                CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide different fighters.", icon="cancel")
+                return
+
+            oddA = self.fights_tab.oddFighterA.get()
+            oddB = self.fights_tab.oddFighterB.get()
+
+            self.controller.fight.create(Fight(fA, oddA, fB, oddB))
+
+            CTkMessagebox.CTkMessagebox(title="OK", message="Fight created with success.", icon="check")
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Could not create this fight.", icon="cancel")
+        finally:
+            self.fights_tab.clear()
+
+    def fetch_fighters(self):
+        self.fighters_tab.clear()
+
+        name = self.fighters_tab.name_to_find.get()
+
+        fighters_fetched: list[Fighter] = list()
+
+        if name == "":
+            fighters_fetched.extend(self.controller.fighter.fetch_fighters())
+        else:
+            f = self.controller.fighter.fetch_fighter_by_name(name)
+            if f:
+                fighters_fetched.append(f)
+
+        for _, fighter in enumerate(fighters_fetched):
+            master = ctk.CTkFrame(self.fighters_tab.fighters,
+                                  width=300, height=10,
+                                  bg_color="white")
+
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Name: {str(fighter.name)}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Nationality: {str(fighter.height)}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Category: {str(fighter.category)}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Wins: {str(fighter.n_wins)}").grid(padx=5, pady=5)
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=f"Loss: {str(fighter.n_loss)}").grid(padx=5, pady=5)
+
+            ctk.CTkButton(master,
+                          width=300,
+                          text="Delete",
+                          command=lambda fighter=fighter: self.delete_fighter(fighter)).grid(padx=5, pady=5)
+
+            master.grid()
+
+    def delete_fighter(self, f: Fighter):
+        # TODO: check if in any fights not finished and has bets.
+        self.controller.fighter.delete_fighter_by_name(f.name)
+        CTkMessagebox.CTkMessagebox(title="OK", message="Fighter deleted with success.", icon="check")
+        self.fetch_fighters()
+
+    def fetch_fights(self):
+        self.fights_tab.clear()
+
+        fights = self.controller.fight.read()
+
+        for _, fight in enumerate(fights):
+            master = ctk.CTkFrame(self.fights_tab.fights,
+                                  width=300, height=10,
+                                  bg_color="white")
+
+            text = f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
+                   f"\nX\n" + \
+                   f"Name:{fight.fB.name}\nOdd:{fight.oddB}\nCategory:{fight.fB.category}\nHeight:{fight.fB.height}m"
+
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=text).grid(padx=5, pady=5)
+
+            ctk.CTkButton(master,
+                          width=300,
+                          text="Delete",
+                          command=lambda fight=fight: self.delete_fight(fight)).grid(padx=5, pady=5)
+
+            ctk.CTkButton(master,
+                          width=300,
+                          text=f"Declare {fight.fA.name} Winner",
+                          command=lambda : self.declare_winner(fight, fight.fA)).grid(padx=5, pady=5)
+
+            ctk.CTkButton(master,
+                          width=300,
+                          text=f"Declare {fight.fB.name} Winner",
+                          command=lambda : self.declare_winner(fight, fight.fB)).grid(padx=5, pady=5)
+
+            master.grid()
+
+    def delete_fight(self, fight: Fight):
+        # TODO: Check if fight has bets.
+        self.controller.fight.delete(fight)
+        CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")
+        self.fetch_fights()
+
+    def declare_winner(self, fight: Fight, fighter: Fighter):
+        self.controller.fight.declare_winner(fight, fighter)
+        CTkMessagebox.CTkMessagebox(title="OK", message="Fight finished with success.", icon="check")
+        self.fetch_fights()
+
+    def activate_view(self, user: Admin, post_logout_callback: t.Callable[..., None]):
+        self.current_admin = user
+        self.post_logout_callback = post_logout_callback
+
+        self.main_label.configure(text=f"Welcome, [ADMIN] {str(user)}!")
+
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=50)
 
     def on_logout_click(self):
         self.main_frame.grid_forget()

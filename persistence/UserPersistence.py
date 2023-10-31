@@ -64,12 +64,13 @@ class UserPersistence(object):
          ]
 
     def fetch_user_by_cpf(self, cpf: str) -> User:
-        user_data: tuple[int, str, str, str, str, int] = self.db_cursor.execute(
-            self.queries["fetch-user-by-cpf"],
-            { "cpf": cpf }
-        ).fetchone()
-
-        id, name, login, cpf, email, utype = user_data
+        try:
+            id, name, login, cpf, email, utype = self.db_cursor.execute(
+                self.queries["fetch-user-by-cpf"],
+                { "cpf": cpf }
+            ).fetchone()
+        except:
+            return None
 
         return User(name=name, login=login, cpf=cpf, email=email, utype=utype, id=id)
 

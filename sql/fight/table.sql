@@ -15,9 +15,11 @@ CREATE TABLE IF NOT EXISTS Fight (
 );
 
 CREATE TRIGGER IF NOT EXISTS winner_declaration AFTER UPDATE OF winner ON Fight
-WHEN old.winner != ""
+WHEN old.winner IS NULL
 BEGIN
     UPDATE Fighter SET n_wins = n_wins + 1 WHERE name = new.winner;
     UPDATE Fighter SET n_loss = n_loss + 1 WHERE name != new.winner and (name = new.fA or name = new.fB);
+    -- TODO: Pay all bets.
+    DELETE FROM Fight WHERE fA = old.fA and fb = old.fB;
 END;
 

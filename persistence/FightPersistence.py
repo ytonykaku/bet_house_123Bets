@@ -12,18 +12,18 @@ class FightPersistence(object):
         self.db_cursor = cursor
 
         self.queries = utils.create_operations_dict(
-            operations=[ "insert", "fetch-fights", "declare-winner", "delete" ],
+            operations=[ "insert", "fetch", "declare-winner", "delete" ],
             SQL_BASE_PATH=os.path.join("sql", "fight")
         )
 
         with open(os.path.join("sql", "fight", "table.sql")) as f:
             cursor.executescript(f.read())
 
-    def create_fight(self, f: Fight):
+    def create(self, f: Fight):
         self.db_cursor.execute(self.queries["insert"], (f.fA.name, f.oddA, f.fB.name, f.oddB))
 
-    def fetch_fights(self):
-        q = self.db_cursor.execute(self.queries["fetch-fights"]).fetchall()
+    def read(self):
+        q = self.db_cursor.execute(self.queries["fetch"]).fetchall()
 
         return [
             Fight(Fighter(fA, categoryA, heightA, nationalityA, n_winsA, n_lossA), oddA,
@@ -34,8 +34,9 @@ class FightPersistence(object):
                 winner in q
         ]
 
+    def delete(self, fight: Fight):
+        self.db_cursor.execute(self.queries["delete"], (fight.fA.name, fight.fB.name))
+
     def declare_winner(self, fight: Fight, fighter: Fighter):
         self.db_cursor.execute(self.queries["declare-winner"], (fighter.name, fight.fA.name, fight.fB.name))
 
-    def delete(self, fight: Fight):
-        self.db_cursor.execute(self.queries["delete"], (fight.fA.name, fight.fB.name))
