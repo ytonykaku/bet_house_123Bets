@@ -1,9 +1,7 @@
 import typing as t
-import datetime as dt
 
 import customtkinter as ctk
 import CTkMessagebox
-
 
 from models.User import User
 from models.Admin import Admin
@@ -11,6 +9,7 @@ from models.Fighter import Fighter
 from models.Fight import Fight
 
 from control.Controller import Controller
+
 
 class PermissionsTab(ctk.CTkFrame):
 
