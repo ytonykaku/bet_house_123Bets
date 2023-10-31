@@ -8,14 +8,18 @@ class FighterController(object):
     def __init__(self, persistence: Persistence):
         self.persistence = persistence
 
-    def create_fighter(self, f: Fighter):
-        self.persistence.fighter.create_fighter(f)
+    def create(self, f: Fighter):
+        self.persistence.fighter.create(f)
 
-    def fetch_fighters(self):
-        return self.persistence.fighter.fetch_fighters()
+    def fetch(self):
+        return self.persistence.fighter.read()
 
-    def fetch_fighter_by_name(self, name: str):
-        return self.persistence.fighter.fetch_fighter_by_name(name)
+    def fetch_by_name(self, name: str):
+        for fighter in self.persistence.fighter.read():
+            if fighter.name == name:
+                return fighter
 
-    def delete_fighter_by_name(self, name: str):
-        self.persistence.fighter.delete_by_name(name)
+        return None
+
+    def delete(self, name: str):
+        self.persistence.fighter.delete(name)

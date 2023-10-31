@@ -286,7 +286,7 @@ class AdminView(object):
                         n_wins=0,
                         n_loss=0)
 
-            self.controller.fighter.create_fighter(f=f)
+            self.controller.fighter.create(f=f)
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Failed to creater fighter.", icon="cancel")
             return
@@ -297,13 +297,13 @@ class AdminView(object):
 
     def create_fight(self):
         try:
-            fA = self.controller.fighter.fetch_fighter_by_name(self.fights_tab.fighterA.get())
+            fA = self.controller.fighter.fetch_by_name(self.fights_tab.fighterA.get())
 
             if not fA:
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Fighter A not found.", icon="cancel")
                 return
 
-            fB = self.controller.fighter.fetch_fighter_by_name(self.fights_tab.fighterB.get())
+            fB = self.controller.fighter.fetch_by_name(self.fights_tab.fighterB.get())
 
             if not fB:
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="Fighter B not found.", icon="cancel")
@@ -332,9 +332,9 @@ class AdminView(object):
         fighters_fetched: list[Fighter] = list()
 
         if name == "":
-            fighters_fetched.extend(self.controller.fighter.fetch_fighters())
+            fighters_fetched.extend(self.controller.fighter.fetch())
         else:
-            f = self.controller.fighter.fetch_fighter_by_name(name)
+            f = self.controller.fighter.fetch_by_name(name)
             if f:
                 fighters_fetched.append(f)
 
@@ -368,7 +368,7 @@ class AdminView(object):
 
     def delete_fighter(self, f: Fighter):
         # TODO: check if in any fights not finished and has bets.
-        self.controller.fighter.delete_fighter_by_name(f.name)
+        self.controller.fighter.delete(f.name)
         CTkMessagebox.CTkMessagebox(title="OK", message="Fighter deleted with success.", icon="check")
         self.fetch_fighters()
 
@@ -429,4 +429,3 @@ class AdminView(object):
     def on_logout_click(self):
         self.main_frame.grid_forget()
         self.post_logout_callback()
-
