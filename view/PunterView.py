@@ -317,7 +317,11 @@ class PunterView(object):
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100) # Show main frame
 
     def update_main_label(self):
-        msg = f"Welcome, {self.punter.name}!\nYou have: ${self.punter.wallet.value_available} bonoros."
+        msg = f"Welcome, {self.punter.name}!\n" + \
+              f"You have: ${self.punter.wallet.value_available} bonoros.\n" + \
+              f"Profit: ${self.punter.profit}\n" + \
+              f"Loss: ${self.punter.loss}"
+
         self.main_label.configure(text=msg)
 
     def on_logout_click(self):

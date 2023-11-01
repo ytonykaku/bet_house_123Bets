@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS Punter (
     FOREIGN KEY(cpf) REFERENCES User(cpf) ON DELETE CASCADE
 );
 
-CREATE TRIGGER IF NOT EXISTS wallet_creation AFTER INSERT ON Punter
+CREATE TRIGGER IF NOT EXISTS wallet_creation
+AFTER INSERT ON Punter
 BEGIN
     INSERT INTO wallet(cpf_owner)
                 VALUES(  new.cpf);

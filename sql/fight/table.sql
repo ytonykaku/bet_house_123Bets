@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS Fight (
     FOREIGN KEY(winner) REFERENCES Fighter(name)
 );
 
-CREATE TRIGGER IF NOT EXISTS winner_declaration_A AFTER UPDATE OF winner ON Fight
+CREATE TRIGGER IF NOT EXISTS winner_declaration_A
+AFTER UPDATE OF winner ON Fight
 FOR EACH ROW
 WHEN new.winner = old.fA
 BEGIN
@@ -27,9 +28,24 @@ BEGIN
           FROM Bet b
           WHERE b.fight_name = old.name) AS bets
     WHERE bets.owner = cpf_owner AND bets.winner = old.fA;
+
+    UPDATE Punter
+    SET profit = profit + bets.value * old.oddA
+    FROM (SELECT *
+          FROM Bet b
+          WHERE b.fight_name = old.name) AS bets
+    WHERE bets.owner = cpf AND bets.winner = old.fA;
+
+    UPDATE Punter
+    SET loss = loss + bets.value
+    FROM (SELECT *
+          FROM Bet b
+          WHERE b.fight_name = old.name) AS bets
+    WHERE bets.owner = cpf AND bets.winner = old.fB;
 END;
 
-CREATE TRIGGER IF NOT EXISTS winner_declaration_B AFTER UPDATE OF winner ON Fight
+CREATE TRIGGER IF NOT EXISTS winner_declaration_B
+AFTER UPDATE OF winner ON Fight
 FOR EACH ROW
 WHEN new.winner = old.fB
 BEGIN
@@ -43,4 +59,18 @@ BEGIN
           FROM Bet b
           WHERE b.fight_name = old.name) AS bets
     WHERE bets.owner = cpf_owner AND bets.winner = old.fB;
+
+    UPDATE Punter
+    SET profit = profit + bets.value * old.oddB
+    FROM (SELECT *
+          FROM Bet b
+          WHERE b.fight_name = old.name) AS bets
+    WHERE bets.owner = cpf AND bets.winner = old.fB;
+
+    UPDATE Punter
+    SET loss = loss + bets.value
+    FROM (SELECT *
+          FROM Bet b
+          WHERE b.fight_name = old.name) AS bets
+    WHERE bets.owner = cpf AND bets.winner = old.fA;
 END;
