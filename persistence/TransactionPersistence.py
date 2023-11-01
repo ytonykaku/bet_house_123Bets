@@ -23,11 +23,9 @@ class TransactionPersistence(object):
             cursor.executescript(f.read())
 
     def insert(self, w: Wallet, t: Transaction):
-        value = t.value if t.ttype == Transaction.DEPOSIT else -t.value
-
         self.db_cursor.execute(
             self.queries["insert"],
-            (w.cpf_owner, t.ttype, value, t.timestamp)
+            (w.cpf_owner, t.ttype, t.value, t.timestamp)
         )
 
     def read(self, p: Punter) -> list[Transaction]:

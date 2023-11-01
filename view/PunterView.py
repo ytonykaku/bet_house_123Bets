@@ -171,8 +171,6 @@ class PunterView(object):
 
             self.controller.transaction.create(self.punter.wallet, t)
 
-            self.punter.wallet.transactions.append(t)
-
             self.update_main_label()
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
@@ -192,8 +190,6 @@ class PunterView(object):
 
             self.controller.transaction.create(self.punter.wallet, t)
 
-            self.punter.wallet.transactions.append(t)
-
             self.update_main_label()
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
@@ -212,5 +208,6 @@ class PunterView(object):
         self.main_label.configure(text=msg)
 
     def on_logout_click(self):
+        self.transaction_tab.clear()
         self.main_frame.grid_forget()
         self.post_logout_callback()

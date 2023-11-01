@@ -11,3 +11,4 @@ class TransactionController(object):
     def create(self, wallet: Wallet, transaction: Transaction):
         self.persistence.transaction.insert(wallet, transaction)
         wallet.value_available += transaction.value if transaction.ttype == Transaction.DEPOSIT else -transaction.value
+        wallet.transactions.insert(0, transaction)
