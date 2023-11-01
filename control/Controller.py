@@ -4,7 +4,6 @@ from control.PunterController import PunterController
 from control.BetController import BetController
 from control.TransactionController import TransactionController
 from control.WalletController import WalletController
-from control.InvestmentController import InvestmentController
 from control.FighterController import FighterController
 from control.FightController import FightController
 
@@ -18,7 +17,6 @@ class Controller(object):
                  bet: BetController,
                  transaction: TransactionController,
                  wallet: WalletController,
-                 investment: InvestmentController,
                  fighter: FighterController,
                  fight: FightController):
          self.user = user
@@ -27,6 +25,5 @@ class Controller(object):
          self.bet = bet
          self.transaction = transaction
          self.wallet = wallet
-         self.investment = investment
          self.fighter = fighter
          self.fight = fight

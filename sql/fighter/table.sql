@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS Fighter (
     n_loss INTEGER DEFAULT 0
 );
 
-CREATE TRIGGER IF NOT EXISTS prevent_delete BEFORE DELETE ON Fighter
+CREATE TRIGGER IF NOT EXISTS prevent_delete_fighter BEFORE DELETE ON Fighter
 WHEN EXISTS (SELECT 1
              FROM Fight f
              WHERE f.fA = OLD.name OR f.fB = OLD.name)
 BEGIN
-    SELECT RAISE(ABORT, 'Can not delete user with value in wallet.');
+    SELECT RAISE(ABORT, 'Can not delete fighter in active fights.');
 END;

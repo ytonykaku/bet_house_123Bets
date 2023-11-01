@@ -22,7 +22,6 @@ from persistence.PunterPersistence import PunterPersistence
 from persistence.WalletPersistence import WalletPersistence
 from persistence.TransactionPersistence import TransactionPersistence
 from persistence.BetPersistence import BetPersistence
-from persistence.InvestmentPersistence import InvestmentPersistence
 from persistence.FightPersistence import FightPersistence
 from persistence.FighterPersistence import FighterPersistence
 
@@ -34,7 +33,6 @@ from control.PunterController import PunterController
 from control.WalletController import WalletController
 from control.BetController import BetController
 from control.TransactionController import TransactionController
-from control.InvestmentController import InvestmentController
 from control.FightController import FightController
 from control.FighterController import FighterController
 
@@ -48,10 +46,9 @@ class App(object):
                                   wallet=WalletPersistence(cursor=cursor),
                                   admin=AdminPersistence(cursor=cursor),
                                   transaction=TransactionPersistence(cursor=cursor),
-                                  bet=BetPersistence(cursor=cursor),
-                                  investment=InvestmentPersistence(cursor=cursor),
                                   fighter=FighterPersistence(cursor=cursor),
-                                  fight=FightPersistence(cursor=cursor))
+                                  fight=FightPersistence(cursor=cursor),
+                                  bet=BetPersistence(cursor=cursor))
 
         self.controller = Controller(punter=PunterController(persistence=persistence),
                                      wallet=WalletController(persistence=persistence),
@@ -59,7 +56,6 @@ class App(object):
                                      admin=AdminController(persistence=persistence),
                                      transaction=TransactionController(persistence=persistence),
                                      bet=BetController(persistence=persistence),
-                                     investment=InvestmentController(persistence=persistence),
                                      fighter=FighterController(persistence=persistence),
                                      fight=FightController(persistence=persistence))
 
@@ -76,8 +72,7 @@ class App(object):
             persistence.fighter.create(fA)
             persistence.fighter.create(fB)
             persistence.fight.create(f)
-        except Exception as e:
-            print(e)
+        except:
             pass
 
         self.master = ctk.CTk()

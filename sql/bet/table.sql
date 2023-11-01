@@ -10,6 +10,16 @@ CREATE TABLE IF NOT EXISTS Bet (
     FOREIGN KEY(winner) REFERENCES Fighter(name)
 );
 
+CREATE TRIGGER IF NOT EXISTS prevent_delete_fight
+BEFORE DELETE ON Fight
+WHEN EXISTS (SELECT 1
+             FROM Bet b
+             INNER JOIN Fight f
+             ON b.fight_name = f.name)
+BEGIN
+    SELECT RAISE(ABORT, 'Can not delete fight with bets.');
+end;
+
 CREATE TRIGGER IF NOT EXISTS check_values BEFORE INSERT ON Bet
 WHEN EXISTS (SELECT 1
              FROM Wallet w

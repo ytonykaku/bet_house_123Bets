@@ -30,7 +30,7 @@ BEGIN
     WHERE bets.owner = cpf_owner AND bets.winner = old.fA;
 
     UPDATE Punter
-    SET profit = profit + bets.value * old.oddA
+    SET profit = profit + bets.value * old.oddA - bets.value
     FROM (SELECT *
           FROM Bet b
           WHERE b.fight_name = old.name) AS bets
@@ -61,7 +61,7 @@ BEGIN
     WHERE bets.owner = cpf_owner AND bets.winner = old.fB;
 
     UPDATE Punter
-    SET profit = profit + bets.value * old.oddB
+    SET profit = profit + bets.value * old.oddB - bets.value
     FROM (SELECT *
           FROM Bet b
           WHERE b.fight_name = old.name) AS bets

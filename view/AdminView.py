@@ -415,8 +415,11 @@ class AdminView(object):
             master.grid()
 
     def delete_fight(self, fight: Fight):
-        self.controller.fight.delete(fight)
-        CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")
+        try:
+            self.controller.fight.delete(fight)
+            CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Could not delete this fight.", icon="cancel")
         self.fetch_fights()
 
     def declare_winner(self, fight: Fight, fighter: Fighter):

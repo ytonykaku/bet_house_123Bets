@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS Investment (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    wallet TEXT NOT NULL,
-
-    FOREIGN KEY(wallet) REFERENCES Wallet(cpf_owner)
-);
-
