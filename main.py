@@ -5,6 +5,10 @@ import customtkinter as ctk
 from models.User import User
 from models.Admin import Admin
 from models.Punter import Punter
+from models.Fighter import Fighter
+from models.Fight import Fight
+from models.Transaction import Transaction
+from models.Bet import Bet
 
 from view.UserView import UserView
 from view.PunterView import PunterView
@@ -61,7 +65,17 @@ class App(object):
 
         try:
             a = Admin(name="Admin", cpf="00000000000", login="admin", password="admin", email="admin@example.com")
+            u1 = Punter(name="Henrique", cpf="00000000001", login="hott", password="hott", email="hott@example.com")
+            u2 = Punter(name="Daniel", cpf="00000000002", login="dani", password="dani", email="dani@example.com")
+            fA = Fighter(name="A", category="a", height=1, nationality="p", n_wins=0, n_loss=0)
+            fB = Fighter(name="B", category="b", height=1, nationality="p", n_wins=0, n_loss=0)
+            f = Fight(fA, 2, fB, 3)
             persistence.user.insert(a)
+            persistence.user.insert(u1)
+            persistence.user.insert(u2)
+            persistence.fighter.create(fA)
+            persistence.fighter.create(fB)
+            persistence.fight.create(f)
         except:
             pass
 

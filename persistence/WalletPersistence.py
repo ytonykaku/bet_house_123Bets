@@ -17,4 +17,4 @@ class WalletPersistence(object):
         )
 
         with open(os.path.join("sql", "wallet", "table.sql")) as f:
-            cursor.execute(f.read())
+            cursor.executescript(f.read())

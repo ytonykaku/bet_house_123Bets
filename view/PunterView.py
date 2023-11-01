@@ -5,6 +5,8 @@ import customtkinter as ctk
 import CTkMessagebox
 
 from models.Punter import Punter
+from models.Fight import Fight
+from models.Bet import Bet
 
 from models.Transaction import Transaction
 from control.Controller import Controller
@@ -61,21 +63,45 @@ class TransactionTab(ctk.CTkFrame):
         for s in self.transactions.grid_slaves():
             s.destroy()
 
+class FightTab(ctk.CTkFrame):
+
+    def __init__(self, master, fetch_fights_callback, **kwargs):
+        super().__init__(master, **kwargs)
+        ctk.CTkButton(master=self,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=fetch_fights_callback,
+                      corner_radius=6).grid(pady=5)
+
+        self.fights = ctk.CTkScrollableFrame(master=self,
+                                             width=300, height=30,
+                                             corner_radius=6)
+
+        self.fights.grid()
+
+    def clear(self):
+        for s in self.fights.grid_slaves():
+            s.destroy()
+
 class BetTab(ctk.CTkFrame):
 
-    def __init__(self, master, func_fetch_fights, bet_callback, **kwargs):
+    def __init__(self, master, fetch_bets_callback, **kwargs):
         super().__init__(master, **kwargs)
+        ctk.CTkButton(master=self,
+                      text="Fetch",
+                      width=300, height=30,
+                      command=fetch_bets_callback,
+                      corner_radius=6).grid(pady=5)
 
-        self.func_fetch_fights = func_fetch_fights
-        self.bet_callback = bet_callback
+        self.bets = ctk.CTkScrollableFrame(master=self,
+                                             width=300, height=30,
+                                             corner_radius=6)
 
-        tab = ctk.CTkTabview(self)
+        self.bets.grid()
 
-        tab.add("New").grid()
-        tab.add("History").grid()
-        tab.add("Active").grid()
-
-        tab.grid()
+    def clear(self):
+        for s in self.bets.grid_slaves():
+            s.destroy()
 
 class PunterView(object):
 
@@ -100,7 +126,7 @@ class PunterView(object):
 
         self.deposit_tab.grid()
 
-        self.withdraw_tab = DepositTab(self.tabs.add("Withdraw"),
+        self.withdraw_tab = WithdrawTab(self.tabs.add("Withdraw"),
                                        self.withdraw_value)
 
         self.withdraw_tab.grid()
@@ -110,9 +136,13 @@ class PunterView(object):
 
         self.transaction_tab.grid()
 
-        self.bet_tab = BetTab(self.tabs.add("Bet"),
-                              lambda : print("Fetch Fights: Not Implemented Yet."),
-                              lambda : print("Bet on Fight: Not Implemented Yet."))
+        self.fight_tab = FightTab(self.tabs.add("Fights"),
+                                  self.fetch_fights)
+
+        self.fight_tab.grid()
+
+        self.bet_tab = BetTab(self.tabs.add("Bets"),
+                                  self.fetch_bets)
 
         self.bet_tab.grid()
 
@@ -124,6 +154,88 @@ class PunterView(object):
                       width=200,
                       fg_color="red",
                       hover_color="red").grid(padx=30, pady=(15, 15))
+
+    def fetch_bets(self):
+        self.bet_tab.clear()
+
+        bets = self.controller.bet.fetch_by_punter(self.punter)
+
+        for bet in bets:
+            master = ctk.CTkFrame(self.bet_tab.bets,
+                        width=300, height=10,
+                        bg_color="white")
+            
+            fight = bet.fight
+
+            text = f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
+                   f"\nX\n" + \
+                   f"Name:{fight.fB.name}\nOdd:{fight.oddB}\nCategory:{fight.fB.category}\nHeight:{fight.fB.height}m\n" + \
+                   f"Winner: {bet.winner.name}\n" + \
+                   f"Value: {bet.value}"
+
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=text).grid(padx=5, pady=5)
+
+            master.grid()
+
+    def fetch_fights(self):
+        self.fight_tab.clear()
+
+        fights = self.controller.fight.read()
+
+        for fight in fights:
+            master = ctk.CTkFrame(self.fight_tab.fights,
+                        width=300, height=10,
+                        bg_color="white")
+
+            text = f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
+                   f"\nX\n" + \
+                   f"Name:{fight.fB.name}\nOdd:{fight.oddB}\nCategory:{fight.fB.category}\nHeight:{fight.fB.height}m"
+
+            ctk.CTkLabel(master,
+                         width=300,
+                         text=text).grid(padx=5, pady=5)
+
+            entry_value = ctk.CTkEntry(master=master, width=300, height=30, placeholder_text="Value")
+            entry_value.grid(padx=10)
+
+            entry_winner = ctk.CTkEntry(master=master, width=300, height=30, placeholder_text="Winner")
+            entry_winner.grid(padx=10)
+
+            ctk.CTkButton(master,
+                          width=300,
+                          text="Bet",
+                          command=lambda fight=fight: self.bet_on_fight(fight,
+                                                                        entry_winner.get(),
+                                                                        entry_value.get())).grid(padx=5, pady=5)
+
+            master.grid()
+
+    def bet_on_fight(self, fight: Fight, winner: str, value: float):
+        try:
+            value = float(value)
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
+            return
+
+        winner = self.controller.fighter.fetch_by_name(winner)
+
+        if not winner:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid winner.", icon="cancel")
+            return
+
+        try:
+            b = Bet(fight, winner, value)
+
+            self.controller.bet.create(self.punter, b)
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message=f"Impossible to bet {b.value} bonoros.", icon="cancel")
+            return
+
+        CTkMessagebox.CTkMessagebox(title="SUCCESS", message="Bet executed.", icon="check")
+
+        self.update_main_label()
 
     def fetch_transactions(self):
         self.transaction_tab.clear()

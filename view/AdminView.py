@@ -407,7 +407,6 @@ class AdminView(object):
             master.grid()
 
     def delete_fight(self, fight: Fight):
-        # TODO: Check if fight has bets.
         self.controller.fight.delete(fight)
         CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")
         self.fetch_fights()
