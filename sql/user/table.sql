@@ -9,13 +9,14 @@ CREATE TABLE IF NOT EXISTS User (
     password TEXT NOT NULL
 );
 
+-- TODO: Check also if the fight has bets.
 CREATE TRIGGER IF NOT EXISTS user_protection BEFORE DELETE ON User
 FOR EACH ROW
 WHEN EXISTS (SELECT 1
              FROM Wallet w
              WHERE w.cpf_owner = OLD.cpf AND (w.available > 0 OR w.applied > 0))
 BEGIN
-    SELECT RAISE(ABORT, 'Can not delete user with value in wallet.');
+    SELECT RAISE(ABORT, 'Can not delete fighter with fight in progress.');
 END;
 
 CREATE TRIGGER IF NOT EXISTS punter_registration AFTER INSERT ON User

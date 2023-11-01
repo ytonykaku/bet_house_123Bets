@@ -16,7 +16,7 @@ class FighterPersistence(object):
         )
 
         with open(os.path.join("sql", "fighter", "table.sql")) as f:
-            cursor.execute(f.read())
+            cursor.executescript(f.read())
 
     def create(self, f: Fighter):
         self.db_cursor.execute(self.queries["insert"], (f.name, f.category, f.height, f.nationality))

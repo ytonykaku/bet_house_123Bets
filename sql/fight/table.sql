@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS Fight (
 
     PRIMARY KEY (fA, fB),
 
-    FOREIGN KEY(fA) REFERENCES Fighter(name),
-    FOREIGN KEY(fB) REFERENCES Fighter(name),
+    FOREIGN KEY(fA) REFERENCES Fighter(name) ON DELETE CASCADE,
+    FOREIGN KEY(fB) REFERENCES Fighter(name) ON DELETE CASCADE,
     FOREIGN KEY(winner) REFERENCES Fighter(name)
 );
 
