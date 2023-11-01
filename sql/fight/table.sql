@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS Fight (
+    name TEXT PRIMARY KEY,
     fA TEXT,
     fB TEXT,
 
@@ -6,8 +7,6 @@ CREATE TABLE IF NOT EXISTS Fight (
     oddB REAL,
 
     winner TEXT NULL,
-
-    PRIMARY KEY (fA, fB),
 
     FOREIGN KEY(fA) REFERENCES Fighter(name) ON DELETE CASCADE,
     FOREIGN KEY(fB) REFERENCES Fighter(name) ON DELETE CASCADE,
@@ -26,10 +25,8 @@ BEGIN
         applied = applied - bets.value
     FROM (SELECT *
           FROM Bet b
-          WHERE b.fA = old.fA AND b.fB = old.fB) AS bets
+          WHERE b.fight_name = old.name) AS bets
     WHERE bets.owner = cpf_owner AND bets.winner = old.fA;
-
-    DELETE FROM Fight WHERE fA = old.fA and fb = old.fB;
 END;
 
 CREATE TRIGGER IF NOT EXISTS winner_declaration_B AFTER UPDATE OF winner ON Fight
@@ -44,8 +41,6 @@ BEGIN
         applied = applied - bets.value
     FROM (SELECT *
           FROM Bet b
-          WHERE b.fA = old.fA AND b.fB = old.fB) AS bets
+          WHERE b.fight_name = old.name) AS bets
     WHERE bets.owner = cpf_owner AND bets.winner = old.fB;
-
-    DELETE FROM Fight WHERE fA = old.fA and fb = old.fB;
 END;

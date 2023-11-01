@@ -1,2 +1,2 @@
-INSERT INTO Bet    (owner, fA, fB, winner, value)
-            VALUES (    ?,  ?,  ?,      ?,     ?);
+INSERT INTO Bet    (owner, fight_name, winner, value)
+            VALUES (    ?,          ?,      ?,     ?);

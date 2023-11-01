@@ -1,13 +1,12 @@
 CREATE TABLE IF NOT EXISTS Bet (
     owner TEXT NOT NULL,
-    fA TEXT NOT NULL,
-    fB TEXT NOT NULL,
+    fight_name TEXT NOT NULL,
     winner TEXT NOT NULL,
     value REAL NOT NULL,
 
-    PRIMARY KEY(owner, fA, fB, value),
+    PRIMARY KEY(owner, fight_name),
     FOREIGN KEY(owner) REFERENCES Wallet(cpf_owner),
-    FOREIGN KEY(fA, fB) REFERENCES Fight(fA, fB) ON DELETE CASCADE,
+    FOREIGN KEY(fight_name) REFERENCES Fight(name) ON DELETE CASCADE,
     FOREIGN KEY(winner) REFERENCES Fighter(name)
 );
 

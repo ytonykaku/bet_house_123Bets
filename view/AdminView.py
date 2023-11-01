@@ -130,11 +130,13 @@ class FightsTab(ctk.CTkFrame):
 
         create_tab.grid()
 
+        self.figh_name = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fight Name")
         self.fighterA = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fighter A")
         self.oddFighterA = ctk.CTkEntry(create_tab, width=300, placeholder_text="Odd Fighter A")
         self.fighterB = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fighter B")
         self.oddFighterB = ctk.CTkEntry(create_tab, width=300, placeholder_text="Odd Fighter B")
 
+        self.figh_name.grid()
         self.fighterA.grid()
         self.oddFighterA.grid()
         self.fighterB.grid()
@@ -315,7 +317,13 @@ class AdminView(object):
             oddA = self.fights_tab.oddFighterA.get()
             oddB = self.fights_tab.oddFighterB.get()
 
-            self.controller.fight.create(Fight(fA, oddA, fB, oddB))
+            fight_name = self.fights_tab.figh_name.get()
+
+            if not fight_name:
+                CTkMessagebox.CTkMessagebox(title="ERROR", message="PLease, provide a fight name.", icon="cancel")
+                return
+
+            self.controller.fight.create(Fight(fight_name, fA, oddA, fB, oddB))
 
             CTkMessagebox.CTkMessagebox(title="OK", message="Fight created with success.", icon="check")
         except:
@@ -374,14 +382,14 @@ class AdminView(object):
     def fetch_fights(self):
         self.fights_tab.clear()
 
-        fights = self.controller.fight.read()
+        fights = list(filter(lambda f: f.winner == None, self.controller.fight.read()))
 
         for _, fight in enumerate(fights):
             master = ctk.CTkFrame(self.fights_tab.fights,
                                   width=300, height=10,
                                   bg_color="white")
-
-            text = f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
+            text = f"{fight.name}\n" + \
+                   f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
                    f"\nX\n" + \
                    f"Name:{fight.fB.name}\nOdd:{fight.oddB}\nCategory:{fight.fB.category}\nHeight:{fight.fB.height}m"
 

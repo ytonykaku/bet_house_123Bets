@@ -23,22 +23,25 @@ class BetPersistence(object):
             cursor.executescript(f.read())
 
     def create(self, p: Punter, b: Bet):
-        f = b.fight
-        self.db_cursor.execute(self.queries["insert"], (p.cpf, f.fA.name, f.fB.name, b.winner.name, b.value))
+        self.db_cursor.execute(self.queries["insert"], (p.cpf, b.fight.name, b.winner.name, b.value))
 
     def read(self, p: Punter):
         R = self.db_cursor.execute(self.queries["fetch"], (p.cpf, )).fetchall()
-
+# 00000000001|Fight 101|A|5.0|
+# Fight 101|A|B|2.0|3.0||
+# A|a|1.0|p|0|0|
+# B|b|1.0|p|0|0
         return [
-            Bet(fight=Fight(Fighter(nameA, catA, hA, natA, nwA, nlA), oddA,
+            Bet(fight=Fight(nameF,
+                            Fighter(nameA, catA, hA, natA, nwA, nlA), oddA,
                             Fighter(nameB, catB, hB, natB, nwB, nlB), oddB),
                 winner=Fighter(nameW, catW, hW, natW, nwW, nlW),
                 value=value)
             for
-            cpf_owner, fA, fB, bet_winner,  value,
+            cpf_owner, bet_fight_name, bet_winner, value,
+            nameF, fFA, fFB, oddA, oddB, fWinner,
             nameA, catA, hA, natA, nwA, nlA,
             nameB, catB, hB, natB, nwB, nlB,
             nameW, catW, hW, natW, nwW, nlW,
-            fA, fB, oddA, oddB, w
             in R
         ]

@@ -20,23 +20,25 @@ class FightPersistence(object):
             cursor.executescript(f.read())
 
     def create(self, f: Fight):
-        self.db_cursor.execute(self.queries["insert"], (f.fA.name, f.oddA, f.fB.name, f.oddB))
+        self.db_cursor.execute(self.queries["insert"], (f.name, f.fA.name, f.oddA, f.fB.name, f.oddB))
 
     def read(self):
         q = self.db_cursor.execute(self.queries["fetch"]).fetchall()
 
         return [
-            Fight(Fighter(fA, categoryA, heightA, nationalityA, n_winsA, n_lossA), oddA,
+            Fight(name,
+                  Fighter(fA, categoryA, heightA, nationalityA, n_winsA, n_lossA), oddA,
                   Fighter(fB, categoryB, heightB, nationalityB, n_winsB, n_lossB), oddB,
-                          winner)
-            for fA, oddA, categoryA, nationalityA, heightA, n_winsA, n_lossA,
+                  winner)
+            for name,
+                fA, oddA, categoryA, nationalityA, heightA, n_winsA, n_lossA,
                 fB, oddB, categoryB, nationalityB, heightB, n_winsB, n_lossB,
                 winner in q
         ]
 
     def delete(self, fight: Fight):
-        self.db_cursor.execute(self.queries["delete"], (fight.fA.name, fight.fB.name))
+        self.db_cursor.execute(self.queries["delete"], (fight.name, ))
 
     def declare_winner(self, fight: Fight, fighter: Fighter):
-        self.db_cursor.execute(self.queries["declare-winner"], (fighter.name, fight.fA.name, fight.fB.name))
+        self.db_cursor.execute(self.queries["declare-winner"], (fighter.name, fight.name))
 

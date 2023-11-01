@@ -182,7 +182,7 @@ class PunterView(object):
     def fetch_fights(self):
         self.fight_tab.clear()
 
-        fights = self.controller.fight.read()
+        fights = list(filter(lambda f: f.winner == None, self.controller.fight.read()))
 
         for fight in fights:
             master = ctk.CTkFrame(self.fight_tab.fights,
@@ -229,7 +229,8 @@ class PunterView(object):
             b = Bet(fight, winner, value)
 
             self.controller.bet.create(self.punter, b)
-        except:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message=f"Impossible to bet {b.value} bonoros.", icon="cancel")
             return
 

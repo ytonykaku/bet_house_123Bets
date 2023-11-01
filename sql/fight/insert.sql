@@ -1,2 +1,2 @@
-INSERT INTO Fight  (fA, oddA, fb, oddB)
-            VALUES ( ?,    ?,  ?,    ?);
+INSERT INTO Fight  (name, fA, oddA, fb, oddB)
+            VALUES (   ?,  ?,    ?,  ?,    ?);
