@@ -12,6 +12,7 @@ class PunterController(object):
 
     def get_from_user(self, user: User) -> Punter | None:
         punters = self.persistence.punter.read()
+
         p = next(filter(lambda p: p.cpf==user.cpf, punters), None)
 
         if p:
@@ -20,5 +21,6 @@ class PunterController(object):
             transactions.sort(key=lambda t: t.timestamp, reverse=True)
 
             p.wallet.transactions.extend(transactions)
+            p.wallet.bets.extend(self.persistence.bet.read(p=p))
 
         return p

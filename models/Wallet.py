@@ -1,4 +1,5 @@
 from models.Transaction import Transaction
+from models.Bet import Bet
 
 
 class Wallet(object):
@@ -11,3 +12,4 @@ class Wallet(object):
         self.value_available = value_available
         self.value_applied = value_applied
         self.transactions: list[Transaction] = list()
+        self.bets: list[Bet] = list()

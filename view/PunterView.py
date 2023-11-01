@@ -158,9 +158,7 @@ class PunterView(object):
     def fetch_bets(self):
         self.bet_tab.clear()
 
-        bets = self.controller.bet.fetch_by_punter(self.punter)
-
-        for bet in bets:
+        for bet in self.punter.wallet.bets:
             master = ctk.CTkFrame(self.bet_tab.bets,
                         width=300, height=10,
                         bg_color="white")

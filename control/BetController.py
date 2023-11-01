@@ -13,6 +13,7 @@ class BetController(object):
         self.persistence.bet.create(p, b)
         p.wallet.value_available -= b.value
         p.wallet.value_applied += b.value
+        p.wallet.bets.append(b)
 
     def fetch_by_punter(self, p: Punter):
         bets = self.persistence.bet.read(p=p)
