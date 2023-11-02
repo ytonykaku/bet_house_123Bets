@@ -61,16 +61,29 @@ class App(object):
 
         try:
             a = Admin(name="Admin", cpf="00000000000", login="admin", password="admin", email="admin@example.com")
+
+            persistence.user.insert(a)
+
             u1 = Punter(name="Henrique", cpf="00000000001", login="hott", password="hott", email="hott@example.com")
             u2 = Punter(name="Daniel", cpf="00000000002", login="dani", password="dani", email="dani@example.com")
-            fA = Fighter(name="A", category="a", height=1, nationality="p", n_wins=0, n_loss=0)
-            fB = Fighter(name="B", category="b", height=1, nationality="p", n_wins=0, n_loss=0)
-            f = Fight("Fight 101", fA, 2, fB, 3)
-            persistence.user.insert(a)
+
             persistence.user.insert(u1)
             persistence.user.insert(u2)
-            persistence.fighter.create(fA)
-            persistence.fighter.create(fB)
+
+            f1 = Fighter(name="Leo", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f2 = Fighter(name="Michelli", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f3 = Fighter(name="Madera", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f4 = Fighter(name="Laia", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f5 = Fighter(name="Elisa", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+
+            persistence.fighter.create(f1)
+            persistence.fighter.create(f2)
+            persistence.fighter.create(f3)
+            persistence.fighter.create(f4)
+            persistence.fighter.create(f5)
+
+            f = Fight("Fight Divorcio", f1, 2, f5, 3)
+
             persistence.fight.create(f)
         except:
             pass

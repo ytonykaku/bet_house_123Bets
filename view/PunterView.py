@@ -6,6 +6,7 @@ import CTkMessagebox
 
 from models.Punter import Punter
 from models.Fight import Fight
+from models.Fighter import Fighter
 from models.Bet import Bet
 
 from models.Transaction import Transaction
@@ -217,9 +218,9 @@ class PunterView(object):
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid value.", icon="cancel")
             return
 
-        winner = self.controller.fighter.fetch_by_name(winner)
+        winner: Fighter | None = self.controller.fighter.fetch_by_name(winner)
 
-        if not winner:
+        if not winner or (winner.name not in [ fight.fA.name, fight.fB.name ]):
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Please, provide a valid winner.", icon="cancel")
             return
 
@@ -227,8 +228,7 @@ class PunterView(object):
             b = Bet(fight, winner, value)
 
             self.controller.bet.create(self.punter, b)
-        except Exception as e:
-            print(e)
+        except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message=f"Impossible to bet {b.value} bonoros.", icon="cancel")
             return
 
