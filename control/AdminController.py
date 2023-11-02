@@ -27,6 +27,9 @@ class AdminController(object):
     def fetch(self) -> list[User]:
         return self.persistence.user.read()
 
+    def fetch_user_by_cpf(self, cpf: str) -> User:
+        users = self.persistence.user.read()
+        return next(filter(lambda u: u.cpf == cpf, users))
+
     def delete(self, u: User):
         self.persistence.user.delete(u)
-
