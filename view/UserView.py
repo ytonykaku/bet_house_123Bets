@@ -63,6 +63,16 @@ class UserView(ctk.CTkFrame):
         self.r_username_entry.grid(pady=5)
         self.r_password_entry.grid(pady=5)
         self.register_button.grid(pady=5)
+    
+    def clear(self):
+        self.username_entry.delete(0, len(self.username_entry.get()))
+        self.password_entry.delete(0, len(self.password_entry.get()))
+
+        self.name_entry.delete(0, len(self.name_entry.get()))
+        self.cpf_entry.delete(0, len(self.cpf_entry.get()))
+        self.email_entry.delete(0, len(self.email_entry.get()))
+        self.r_username_entry.delete(0, len(self.r_username_entry.get()))
+        self.r_password_entry.delete(0, len(self.r_password_entry.get()))
 
     def on_login_click(self):
         username = self.username_entry.get()
@@ -86,8 +96,8 @@ class UserView(ctk.CTkFrame):
             name     = Validation.validarVazio(self.name_entry.get())
             cpf      = Validation.validarCpf(self.cpf_entry.get())
             email    = Validation.validarVazio(self.email_entry.get())
-            username = Validation.validarVazio(self.username_entry.get())
-            password = Validation.validarVazio(self.password_entry.get())
+            username = Validation.validarVazio(self.r_username_entry.get())
+            password = Validation.validarVazio(self.r_password_entry.get())
 
             u = User(name=name, cpf=cpf, email=email, login=username, password=password)
 
@@ -97,5 +107,7 @@ class UserView(ctk.CTkFrame):
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Failed to register.", icon="cancel")
             return
+        finally:
+            self.clear()
 
-        self.grid_forget()
+        self.tabs.set("Login")
