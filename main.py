@@ -83,9 +83,11 @@ class App(object):
             persistence.fighter.create(f4)
             persistence.fighter.create(f5)
 
-            f = Fight("Divorcio", f1, 2, f5, 3)
+            fg1 = Fight("Divorcio", f1, 2, f5, 3)
+            fg2 = Fight("Gordin", f4, 4, f3, 6)
 
-            persistence.fight.create(f)
+            persistence.fight.create(fg1)
+            persistence.fight.create(fg2)
         except:
             pass
 

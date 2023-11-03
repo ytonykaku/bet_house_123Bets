@@ -159,7 +159,8 @@ class PunterView(ctk.CTkFrame):
 
             entry_winner = ctk.CTkEntry(master=value_form, placeholder_text="Winner")
 
-            cmd = lambda fight=fight: self.bet_on_fight(fight, entry_winner.get(),entry_value.get())
+            cmd = lambda fight=fight, winner=entry_winner, value=entry_value: \
+                         self.bet_on_fight(fight, winner.get(), value.get())
 
             confirm_bet_button = ctk.CTkButton(form, text="Bet", command=cmd, height=56)
 
@@ -171,7 +172,7 @@ class PunterView(ctk.CTkFrame):
             entry_value.grid(row=1, column=0, padx=5, pady=5)
             confirm_bet_button.grid(row=0, column=1, pady=5)
 
-    def bet_on_fight(self, fight: Fight, winner: str, value: float):
+    def bet_on_fight(self, fight: Fight, winner: str, value: str):
         try:
             value = float(value)
         except:

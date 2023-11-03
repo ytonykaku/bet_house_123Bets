@@ -373,11 +373,13 @@ class AdminView(ctk.CTkFrame):
 
             declareA_winner = ctk.CTkButton(form,
                                             text=f"Declare {fight.fA.name} Winner",
-                                            command=lambda : self.declare_winner(fight, fight.fA))
+                                            command=lambda fight=fight, fighter=fight.fA: \
+                                                           self.declare_winner(fight, fighter))
 
             declareB_winner = ctk.CTkButton(form,
                                             text=f"Declare {fight.fB.name} Winner",
-                                            command=lambda : self.declare_winner(fight, fight.fB))
+                                            command=lambda fight=fight, fighter=fight.fB: \
+                                                           self.declare_winner(fight, fighter))
 
             delete_button = ctk.CTkButton(master,
                                           text="Delete",
