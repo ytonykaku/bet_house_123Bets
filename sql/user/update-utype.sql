@@ -1,6 +1,6 @@
 UPDATE
 User
 SET
-utype = {utype}
+utype = ?
 WHERE
-cpf = {cpf};
+cpf = ?;

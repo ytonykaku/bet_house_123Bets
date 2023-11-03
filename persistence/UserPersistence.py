@@ -42,6 +42,4 @@ class UserPersistence(object):
         self.db_cursor.execute(self.queries["delete"], (user.cpf, ))
 
     def update_utype(self, user: User):
-        self.db_cursor.executescript(
-            self.queries["elevate-by-cpf"].format(cpf=user.cpf, utype=user.utype),
-        )
+        self.db_cursor.execute(self.queries["update-utype"], (user.utype, user.cpf))

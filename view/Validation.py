@@ -1,4 +1,4 @@
-def validarCpf(cpf):
+def validarCpf(cpf: str):
     if not cpf:
         raise ValueError("CPF não pode estar vazio")
 
@@ -12,7 +12,7 @@ def validarCpf(cpf):
 
     return cpf
 
-def validarValor(valor):
+def validarValor(valor: str):
     if not valor:
         raise ValueError("O valor não pode estar vazio")
 
@@ -30,7 +30,7 @@ def validarValor(valor):
 
     return valor_decimal
 
-def validarVazio(entrada):
+def validarVazio(entrada: str):
     if not entrada:
         raise ValueError("não pode estar vazio")
 

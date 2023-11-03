@@ -10,210 +10,201 @@ from models.Fight import Fight
 
 from control.Controller import Controller
 
+from view import Frames
 
-class PermissionsTab(ctk.CTkFrame):
-
-    def __init__(self, master, elevate_callback, depress_callback, **kwargs):
-        super().__init__(master, **kwargs)
-
-        self.cpf = ctk.CTkEntry(master=self, width=300, height=30, placeholder_text="CPF")
-        self.cpf.grid(padx=10)
-
-        elevate_button = ctk.CTkButton(master=self,
-                                       text="Elevate",
-                                       width=300, height=30,
-                                       command=elevate_callback,
-                                       corner_radius=6)
-        elevate_button.grid(pady=5)
-
-        depress_button = ctk.CTkButton(master=self,
-                                       text="Depress",
-                                       width=300, height=30,
-                                       command=depress_callback,
-                                       corner_radius=6)
-        depress_button.grid(pady=5)
-
-class UsersTab(ctk.CTkFrame):
-
-    def __init__(self, master, fetch_callback, **kwargs):
-        super().__init__(master, **kwargs)
-
-        self.cpf = ctk.CTkEntry(self, width=300, placeholder_text="CPF")
-        self.cpf.grid()
-
-        ctk.CTkButton(master=self,
-                      text="Fetch",
-                      width=300, height=30,
-                      command=fetch_callback,
-                      corner_radius=6).grid(pady=5)
-
-        self.users = ctk.CTkScrollableFrame(master=self,
-                                            width=300, height=30,
-                                            corner_radius=6)
-        self.users.grid(pady=5)
-
-    def clear(self):
-        for s in self.users.grid_slaves():
-            s.destroy()
 
 class FightersTab(ctk.CTkFrame):
 
     def __init__(self, master, create_callback, fetch_callback, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(master, fg_color="transparent", **kwargs)
 
-        tabs = ctk.CTkTabview(self)
-
-        # -----------------------------------------------------------------------------------------
-
-        create_tab = tabs.add("Create")
-
-        create_tab.grid()
-
-        self.name_to_create = ctk.CTkEntry(create_tab, width=300, placeholder_text="NAME")
-        self.category = ctk.CTkEntry(create_tab, width=300, placeholder_text="CATEGORY")
-        self.height = ctk.CTkEntry(create_tab, width=300, placeholder_text="HEIGHT")
-        self.nationality = ctk.CTkEntry(create_tab, width=300, placeholder_text="NATIONALITY")
-
-        self.name_to_create.grid()
-        self.category.grid()
-        self.height.grid()
-        self.nationality.grid()
-
-        ctk.CTkButton(master=create_tab,
-                      text="Create",
-                      width=300, height=30,
-                      command=create_callback,
-                      corner_radius=6).grid(pady=5)
+        self.tabs = ctk.CTkTabview(self, width=500)
 
         # -----------------------------------------------------------------------------------------
 
-        find_tab = tabs.add("Find")
+        self.create_tab = self.tabs.add("Create")
 
-        self.name_to_find = ctk.CTkEntry(find_tab, width=300, placeholder_text="NAME")
+        self.create_tab.grid_columnconfigure(0, weight=1)
 
-        self.name_to_find.grid()
+        self.name_to_create = ctk.CTkEntry(self.create_tab, placeholder_text="Name")
+        self.category = ctk.CTkEntry(self.create_tab, placeholder_text="Category")
+        self.height = ctk.CTkEntry(self.create_tab, placeholder_text="Height")
+        self.nationality = ctk.CTkEntry(self.create_tab, placeholder_text="Nationality")
 
-        self.fighters = ctk.CTkScrollableFrame(master=find_tab,
-                                            width=300, height=30,
-                                            corner_radius=6)
-        ctk.CTkButton(master=find_tab,
-                      text="Fetch",
-                      width=300, height=30,
-                      command=fetch_callback,
-                      corner_radius=6).grid(pady=5)
-    
-        self.fighters.grid()
+        self.create_button = ctk.CTkButton(master=self.create_tab, text="Create", command=create_callback)
 
         # -----------------------------------------------------------------------------------------
 
-        tabs.grid()
-    
+        self.find_tab = self.tabs.add("Find")
+
+        self.find_tab.grid_columnconfigure(0, weight=1)
+
+        self.fighters = Frames.SearchFrame(master=self.find_tab,
+                                           keyword="Name",
+                                           fetch_callback=fetch_callback)
+
     def clear(self):
-        for s in self.fighters.grid_slaves():
-            s.destroy()
+        self.fighters.clear()
 
         self.name_to_create.delete(0, len(self.name_to_create.get()))
         self.category.delete(0, len(self.category.get()))
         self.height.delete(0, len(self.height.get()))
         self.nationality.delete(0, len(self.nationality.get()))
+    
+    def grid(self, **kwargs):
+        super().grid(**kwargs)
+        self.tabs.grid()
+
+        # self.create_tab.grid()
+
+        self.name_to_create.grid(pady=5)
+        self.category.grid(pady=5)
+        self.height.grid(pady=5)
+        self.nationality.grid(pady=5)
+
+        self.create_button.grid(pady=5)
+
+        # self.find_tab.grid()
+        self.fighters.grid()
 
 class FightsTab(ctk.CTkFrame):
 
     def __init__(self, master, create_callback, fetch_callback, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(master, fg_color="transparent", **kwargs)
 
-        tabs = ctk.CTkTabview(self)
-
-        # -----------------------------------------------------------------------------------------
-
-        create_tab = tabs.add("Create")
-
-        create_tab.grid()
-
-        self.figh_name = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fight Name")
-        self.fighterA = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fighter A")
-        self.oddFighterA = ctk.CTkEntry(create_tab, width=300, placeholder_text="Odd Fighter A")
-        self.fighterB = ctk.CTkEntry(create_tab, width=300, placeholder_text="Fighter B")
-        self.oddFighterB = ctk.CTkEntry(create_tab, width=300, placeholder_text="Odd Fighter B")
-
-        self.figh_name.grid()
-        self.fighterA.grid()
-        self.oddFighterA.grid()
-        self.fighterB.grid()
-        self.oddFighterB.grid()
-
-        ctk.CTkButton(master=create_tab,
-                      text="Create",
-                      width=300, height=30,
-                      command=create_callback,
-                      corner_radius=6).grid(pady=5)
+        self.tabs = ctk.CTkTabview(self)
 
         # -----------------------------------------------------------------------------------------
 
-        find_tab = tabs.add("Find")
+        self.create_tab = self.tabs.add("Create")
 
-        self.fights = ctk.CTkScrollableFrame(master=find_tab,
-                                            width=300, height=30,
-                                            corner_radius=6)
-        ctk.CTkButton(master=find_tab,
-                      text="Fetch",
-                      width=300, height=30,
-                      command=fetch_callback,
-                      corner_radius=6).grid(pady=5)
-    
-        self.fights.grid()
+        self.create_tab.grid_columnconfigure(0, weight=1)
 
-        tabs.grid()
+        self.fight_name = ctk.CTkEntry(self.create_tab, placeholder_text="Fight Name")
+        self.fighterA = ctk.CTkEntry(self.create_tab, placeholder_text="Fighter A")
+        self.oddFighterA = ctk.CTkEntry(self.create_tab, placeholder_text="Odd Fighter A")
+        self.fighterB = ctk.CTkEntry(self.create_tab, placeholder_text="Fighter B")
+        self.oddFighterB = ctk.CTkEntry(self.create_tab, placeholder_text="Odd Fighter B")
+
+        self.create_button = ctk.CTkButton(master=self.create_tab, text="Create", command=create_callback)
+
+        # -----------------------------------------------------------------------------------------
+        self.find_tab = self.tabs.add("Find")
+
+        self.find_tab.grid_columnconfigure(0, weight=1)
+
+        self.fights = Frames.SearchFrame(master=self.find_tab,
+                                         keyword="Name",
+                                         fetch_callback=fetch_callback)
 
     def clear(self):
-        for s in self.fights.grid_slaves():
-            s.destroy()
+        self.fights.clear()
 
+        self.fight_name.delete(0, len(self.fight_name.get()))
         self.fighterA.delete(0, len(self.fighterA.get()))
-        self.fighterB.delete(0, len(self.fighterB.get()))
         self.oddFighterA.delete(0, len(self.oddFighterA.get()))
+        self.fighterB.delete(0, len(self.fighterB.get()))
         self.oddFighterB.delete(0, len(self.oddFighterB.get()))
 
-class AdminView(object):
+    def grid(self, **kwargs):
+        super().grid(**kwargs)
+        self.tabs.grid()
 
-    def __init__(self, master: ctk.CTk, controller: Controller):
+        # self.create_tab().grid()
+
+        self.fight_name.grid(pady=5)
+
+        self.fighterA.grid(pady=5)
+        self.oddFighterA.grid(pady=5)
+
+        self.fighterB.grid(pady=5)
+        self.oddFighterB.grid(pady=5)
+
+        self.create_button.grid(pady=5)
+
+        # self.find_tab.grid()
+
+        self.fights.grid()
+
+class AdminView(ctk.CTkFrame):
+
+    def __init__(self,
+                 master,
+                 controller: Controller,
+                 admin: Admin,
+                 post_logout_callback: t.Callable[..., None],
+                 **kwargs):
+        super().__init__(master, fg_color="transparent", **kwargs)
+
         self.controller = controller
+        self.admin = admin
+        self.post_logout_callback = post_logout_callback
 
-        self.main_frame = ctk.CTkFrame(master, corner_radius=0, height=400, width=400)
+        # -------------------------- x --------------------------
 
-        self.main_label = ctk.CTkLabel(self.main_frame,
-                                       text="[BUG DETECTED]",
-                                       font=ctk.CTkFont(size=20, weight="bold"))
-        self.main_label.grid(row=0, column=0, padx=30, pady=(30, 15))
+        self.admin_frame = Frames.AdminFrame(master=self,
+                                             admin=self.admin)
 
-        tabs = ctk.CTkTabview(self.main_frame)
+        # -------------------------- x --------------------------
 
-        self.users_tab = UsersTab(master=tabs.add("Users"),
-                                  fetch_callback=self.fetch_users)
-        self.users_tab.grid()
+        self.tabs = ctk.CTkTabview(self)
 
-        self.fighters_tab = FightersTab(master=tabs.add("Fighters"),
+        # -------------------------- x --------------------------
+
+        self.t1 = self.tabs.add("Users")
+
+        self.t1.grid_columnconfigure(0, weight=1)
+
+        self.users_tab = Frames.SearchFrame(master= self.t1,
+                                            keyword="CPF",
+                                            fetch_callback=self.fetch_users)
+
+        # -------------------------- x --------------------------
+
+        self.t2 = self.tabs.add("Fighters")
+
+        self.t2.grid_columnconfigure(0, weight=1)
+
+        self.fighters_tab = FightersTab(master=self.t2,
                                         create_callback=self.create_fighter,
                                         fetch_callback=self.fetch_fighters)
-        self.fighters_tab.grid()
 
-        self.fights_tab = FightsTab(master=tabs.add("Fights"),
+        # -------------------------- x --------------------------
+
+        self.t3 = self.tabs.add("Fights")
+
+        self.t3.grid_columnconfigure(0, weight=1)
+
+        self.fights_tab = FightsTab(master=self.t3,
                                     create_callback=self.create_fight,
                                     fetch_callback=self.fetch_fights)
+
+        # -------------------------- x --------------------------
+
+        self.logout_button = ctk.CTkButton(self, text="Logout", fg_color="red", command=self.on_logout_click)
+
+
+    def grid(self, **kwargs):
+        super().grid(**kwargs)
+        self.admin_frame.grid()
+
+        self.tabs.grid()
+
+        #self.t1.grid()
+        self.users_tab.grid()
+
+        #self.t2.grid()
+        self.fighters_tab.grid()
+
+        #self.t3.grid()
         self.fights_tab.grid()
 
-        tabs.grid(row=1, column=0)
-
-        ctk.CTkButton(self.main_frame,
-                      text="Logout",
-                      command=self.on_logout_click,
-                      fg_color="red",
-                      hover_color="red").grid(row=3, column=0, padx=30, pady=(15, 15))
+        self.logout_button.grid(pady=5)
 
     def fetch_users(self):
-        self.users_tab.clear()
+        cpf = self.users_tab.get_input()
 
-        cpf = self.users_tab.cpf.get()
+        self.users_tab.clear()
 
         users_fetched: list[User] = list()
 
@@ -224,59 +215,62 @@ class AdminView(object):
             if u:
                 users_fetched.append(u)
 
-        for _, user in enumerate(users_fetched):
-            master = ctk.CTkFrame(self.users_tab.users,
-                                  width=300, height=10,
-                                  bg_color="white")
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Name: {str(user)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"CPF: {user.cpf}").grid(padx=5, pady=5)
+        for user in users_fetched:
+            master = ctk.CTkFrame(self.users_tab.container,)
 
-            ctk.CTkButton(master,
-                          width=300,
-                          text="Delete",
-                          command=lambda user=user: self.delete_user(user)).grid(padx=5, pady=5)
-            ctk.CTkButton(master,
-                          width=300,
-                          text="Elevate",
-                          command=lambda user=user: self.elevate_user(user)).grid(padx=5, pady=5)
-            ctk.CTkButton(master,
-                          width=300,
-                          text="Depress",
-                          command=lambda user=user: self.depress_user(user)).grid(padx=5, pady=5)
+            Frames.UserFrame(master, user).grid()
 
+            if user.utype == 0:
+                elevate_button = ctk.CTkButton(master=master, text="Elevate", command=lambda u=user: self.elevate_user(u=u))
+                elevate_button.grid(pady=5)
+
+            if user.utype == 1:
+                depress_button = ctk.CTkButton(master=master, text="Depress", command=lambda u=user: self.depress_user(u=u))
+                depress_button.grid(pady=5)
+
+            delete_button = ctk.CTkButton(master=master, text="Delete", command=lambda u=user: self.delete_user(u=u))
+
+            delete_button.grid(pady=5)
             master.grid()
 
     def delete_user(self, u: User):
-        if u.cpf == self.current_admin.cpf:
+        if u.cpf == self.admin.cpf:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete connected user.", icon="cancel")
             return
 
         try:
             self.controller.admin.delete(u)
             CTkMessagebox.CTkMessagebox(title="OK", message="Deletion executed with sucess.", icon="check")
-            self.fetch_users()
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete user with money or bets.", icon="cancel")
 
+        self.fetch_users()
+
     def depress_user(self, u: User):
+        if u.cpf == self.admin.cpf:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Can not delete connected user.", icon="cancel")
+            return
+
         try:
             self.controller.admin.depress(u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="Depression executed with sucess.", icon="check")
-        except:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Depression failed to execut.", icon="cancel")
+
+        self.fetch_users()
 
     def elevate_user(self, u: User):
         try:
             self.controller.admin.elevate(u)
 
             CTkMessagebox.CTkMessagebox(title="OK", message="Elevation executed with sucess.", icon="check")
-        except:
+        except Exception as e:
+            print(e)
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Elevation failed to execut.", icon="cancel")
+
+        self.fetch_users()
 
     def create_fighter(self):
         try:
@@ -317,7 +311,7 @@ class AdminView(object):
             oddA = self.fights_tab.oddFighterA.get()
             oddB = self.fights_tab.oddFighterB.get()
 
-            fight_name = self.fights_tab.figh_name.get()
+            fight_name = self.fights_tab.fight_name.get()
 
             if not fight_name:
                 CTkMessagebox.CTkMessagebox(title="ERROR", message="PLease, provide a fight name.", icon="cancel")
@@ -332,9 +326,9 @@ class AdminView(object):
             self.fights_tab.clear()
 
     def fetch_fighters(self):
-        self.fighters_tab.clear()
+        name = self.fighters_tab.fighters.get_input()
 
-        name = self.fighters_tab.name_to_find.get()
+        self.fighters_tab.clear()
 
         fighters_fetched: list[Fighter] = list()
 
@@ -346,37 +340,23 @@ class AdminView(object):
                 fighters_fetched.append(f)
 
         for _, fighter in enumerate(fighters_fetched):
-            master = ctk.CTkFrame(self.fighters_tab.fighters,
-                                  width=300, height=10,
-                                  bg_color="white")
-
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Name: {str(fighter.name)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Nationality: {str(fighter.height)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Category: {str(fighter.category)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Wins: {str(fighter.n_wins)}").grid(padx=5, pady=5)
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=f"Loss: {str(fighter.n_loss)}").grid(padx=5, pady=5)
+            master = ctk.CTkFrame(self.fighters_tab.fighters.container)
+            
+            Frames.FighterFrame(master=master, fighter=fighter).grid()
 
             ctk.CTkButton(master,
-                          width=300,
                           text="Delete",
                           command=lambda fighter=fighter: self.delete_fighter(fighter)).grid(padx=5, pady=5)
 
             master.grid()
 
     def delete_fighter(self, f: Fighter):
-        # TODO: check if in any fights not finished and has bets.
-        self.controller.fighter.delete(f.name)
-        CTkMessagebox.CTkMessagebox(title="OK", message="Fighter deleted with success.", icon="check")
+        try:
+            self.controller.fighter.delete(f.name)
+            CTkMessagebox.CTkMessagebox(title="OK", message="Fighter deleted with success.", icon="check")
+        except:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Could not delete this fighter.", icon="cancel")
+
         self.fetch_fighters()
 
     def fetch_fights(self):
@@ -385,34 +365,31 @@ class AdminView(object):
         fights = list(filter(lambda f: f.winner == None, self.controller.fight.read()))
 
         for _, fight in enumerate(fights):
-            master = ctk.CTkFrame(self.fights_tab.fights,
-                                  width=300, height=10,
-                                  bg_color="white")
-            text = f"{fight.name}\n" + \
-                   f"Name:{fight.fA.name}\nOdd:{fight.oddA}\nCategory:{fight.fA.category}\nHeight:{fight.fA.height}m" + \
-                   f"\nX\n" + \
-                   f"Name:{fight.fB.name}\nOdd:{fight.oddB}\nCategory:{fight.fB.category}\nHeight:{fight.fB.height}m"
+            master = ctk.CTkFrame(self.fights_tab.fights.container)
 
-            ctk.CTkLabel(master,
-                         width=300,
-                         text=text).grid(padx=5, pady=5)
+            fight_frame = Frames.FightFrame(master=master, fight=fight)
 
-            ctk.CTkButton(master,
-                          width=300,
-                          text="Delete",
-                          command=lambda fight=fight: self.delete_fight(fight)).grid(padx=5, pady=5)
+            form = ctk.CTkFrame(master=master, fg_color="transparent")
 
-            ctk.CTkButton(master,
-                          width=300,
-                          text=f"Declare {fight.fA.name} Winner",
-                          command=lambda : self.declare_winner(fight, fight.fA)).grid(padx=5, pady=5)
+            declareA_winner = ctk.CTkButton(form,
+                                            text=f"Declare {fight.fA.name} Winner",
+                                            command=lambda : self.declare_winner(fight, fight.fA))
 
-            ctk.CTkButton(master,
-                          width=300,
-                          text=f"Declare {fight.fB.name} Winner",
-                          command=lambda : self.declare_winner(fight, fight.fB)).grid(padx=5, pady=5)
+            declareB_winner = ctk.CTkButton(form,
+                                            text=f"Declare {fight.fB.name} Winner",
+                                            command=lambda : self.declare_winner(fight, fight.fB))
+
+            delete_button = ctk.CTkButton(master,
+                                          text="Delete",
+                                          command=lambda fight=fight: self.delete_fight(fight),
+                                          width=200)
 
             master.grid()
+            fight_frame.grid()
+            form.grid()
+            declareA_winner.grid(row=0, column=0, pady=5, padx=5)
+            declareB_winner.grid(row=0, column=1, pady=5, padx=5)
+            delete_button.grid(pady=5)
 
     def delete_fight(self, fight: Fight):
         try:
@@ -420,6 +397,7 @@ class AdminView(object):
             CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")
         except:
             CTkMessagebox.CTkMessagebox(title="ERROR", message="Could not delete this fight.", icon="cancel")
+
         self.fetch_fights()
 
     def declare_winner(self, fight: Fight, fighter: Fighter):
@@ -427,14 +405,6 @@ class AdminView(object):
         CTkMessagebox.CTkMessagebox(title="OK", message="Fight finished with success.", icon="check")
         self.fetch_fights()
 
-    def activate_view(self, user: Admin, post_logout_callback: t.Callable[..., None]):
-        self.current_admin = user
-        self.post_logout_callback = post_logout_callback
-
-        self.main_label.configure(text=f"Welcome, [ADMIN] {str(user)}!")
-
-        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=50)
-
     def on_logout_click(self):
-        self.main_frame.grid_forget()
+        self.grid_forget()
         self.post_logout_callback()

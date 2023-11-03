@@ -27,14 +27,12 @@ class BetPersistence(object):
 
     def read(self, p: Punter):
         R = self.db_cursor.execute(self.queries["fetch"], (p.cpf, )).fetchall()
-# 00000000001|Fight 101|A|5.0|
-# Fight 101|A|B|2.0|3.0||
-# A|a|1.0|p|0|0|
-# B|b|1.0|p|0|0
+
         return [
             Bet(fight=Fight(nameF,
                             Fighter(nameA, catA, hA, natA, nwA, nlA), oddA,
-                            Fighter(nameB, catB, hB, natB, nwB, nlB), oddB),
+                            Fighter(nameB, catB, hB, natB, nwB, nlB), oddB,
+                            fWinner),
                 winner=Fighter(nameW, catW, hW, natW, nwW, nlW),
                 value=value)
             for

@@ -38,8 +38,8 @@ WHEN new.utype = 0
 BEGIN
     DELETE FROM Admin WHERE cpf = new.cpf;
 
-    INSERT OR IGNORE INTO Punter (    cpf)
-                          VALUES (new.cpf);
+    INSERT INTO Punter (    cpf)
+                VALUES (new.cpf);
 END;
 
 CREATE TRIGGER IF NOT EXISTS elevation AFTER UPDATE OF utype ON User
@@ -47,7 +47,7 @@ WHEN new.utype = 1
 BEGIN
     DELETE FROM Punter WHERE cpf = new.cpf;
 
-    INSERT OR IGNORE INTO Admin  (    cpf)
-                          VALUES (new.cpf);
+    INSERT INTO Admin  (    cpf)
+                VALUES (new.cpf);
 END;
 
