@@ -383,7 +383,7 @@ class AdminView(ctk.CTkFrame):
 
             delete_button = ctk.CTkButton(master,
                                           text="Delete",
-                                          command=lambda fight=fight: self.delete_fight(fight),
+                                          command=lambda _fight=fight: self.delete_fight(_fight),
                                           width=200)
 
             master.grid()
@@ -394,6 +394,7 @@ class AdminView(ctk.CTkFrame):
             delete_button.grid(pady=5)
 
     def delete_fight(self, fight: Fight):
+        print(fight.name)
         try:
             self.controller.fight.delete(fight)
             CTkMessagebox.CTkMessagebox(title="OK", message="Fight deleted with sucess.", icon="check")

@@ -14,8 +14,7 @@ CREATE TRIGGER IF NOT EXISTS prevent_delete_fight
 BEFORE DELETE ON Fight
 WHEN EXISTS (SELECT 1
              FROM Bet b
-             INNER JOIN Fight f
-             ON b.fight_name = f.name)
+             WHERE b.fight_name = OLD.name)
 BEGIN
     SELECT RAISE(ABORT, 'Can not delete fight with bets.');
 end;
