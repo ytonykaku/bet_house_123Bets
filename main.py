@@ -71,11 +71,11 @@ class App(object):
             persistence.user.insert(u1)
             persistence.user.insert(u2)
 
-            f1 = Fighter(name="Leo", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
-            f2 = Fighter(name="Michelli", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
-            f3 = Fighter(name="Madera", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
-            f4 = Fighter(name="Laia", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
-            f5 = Fighter(name="Elisa", category="CCOMP", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f1 = Fighter(name="Junior dos Santos", category="MMA", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f2 = Fighter(name="Marco Ruas", category="MMA", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f3 = Fighter(name="Charles Oliveira", category="MMA", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f4 = Fighter(name="Jose Aldo", category="MMA", height=1.7, nationality="BR", n_wins=0, n_loss=0)
+            f5 = Fighter(name="Deiveson Figueredo", category="MMA", height=1.7, nationality="BR", n_wins=0, n_loss=0)
 
             persistence.fighter.create(f1)
             persistence.fighter.create(f2)
@@ -83,8 +83,8 @@ class App(object):
             persistence.fighter.create(f4)
             persistence.fighter.create(f5)
 
-            fg1 = Fight("Divorcio", f1, 2, f5, 3)
-            fg2 = Fight("Gordin", f4, 4, f3, 6)
+            fg1 = Fight("Luta da Boa 001", f1, 2, f5, 3)
+            fg2 = Fight("Luta da Boa 002", f4, 4, f3, 6)
 
             persistence.fight.create(fg1)
             persistence.fight.create(fg2)
