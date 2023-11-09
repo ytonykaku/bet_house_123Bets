@@ -13,3 +13,6 @@ class UserController(object):
 
     def register(self, u: User):
         self.persistence.user.insert(u)
+
+    def update(self, u: User):
+        self.persistence.user.update(u)

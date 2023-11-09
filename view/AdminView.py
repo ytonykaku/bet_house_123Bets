@@ -1,4 +1,5 @@
 import typing as t
+import sqlite3 as sql3
 
 import customtkinter as ctk
 import CTkMessagebox
@@ -147,7 +148,7 @@ class AdminView(ctk.CTkFrame):
 
         # -------------------------- x --------------------------
 
-        self.tabs = ctk.CTkTabview(self)
+        self.tabs = ctk.CTkTabview(self, command=self.on_tab_change)
 
         # -------------------------- x --------------------------
 
@@ -183,6 +184,13 @@ class AdminView(ctk.CTkFrame):
 
         self.logout_button = ctk.CTkButton(self, text="Logout", fg_color="red", command=self.on_logout_click)
 
+        self.t4 = self.tabs.add("Profile")
+
+        self.t4.grid_columnconfigure(0, weight=1)
+
+        self.profile_tab = Frames.ProfileFrame(self.t4, self.admin, confirm_callback=self.update_profile)
+
+        self.logout_button = ctk.CTkButton(self, text="Logout", fg_color="red", command=self.on_logout_click)
 
     def grid(self, **kwargs):
         super().grid(**kwargs)
@@ -199,7 +207,41 @@ class AdminView(ctk.CTkFrame):
         #self.t3.grid()
         self.fights_tab.grid()
 
+        self.profile_tab.grid()
+
         self.logout_button.grid(pady=5)
+
+    def on_tab_change(self):
+        self.profile_tab.update()
+
+    def update_profile(self):
+        bkp_name = str(self.admin.name)
+        bkp_email = str(self.admin.email)
+
+        self.admin.name = self.profile_tab.name.get()
+        self.admin.email = self.profile_tab.email.get()
+
+        try:
+            if not self.admin.name:
+                raise Exception("Please, provide a name.")
+
+            if not self.admin.email:
+                raise Exception("Please, provide a email.")
+
+            self.controller.user.update(self.admin)
+            self.admin_frame.update()
+        except sql3.IntegrityError:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Email already in use.", icon="cancel")
+            self.admin.name = bkp_name
+            self.admin.email = bkp_email
+            return
+        except Exception as e:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message=str(e), icon="cancel")
+            self.admin.name = bkp_name
+            self.admin.email = bkp_email
+            return
+
+        CTkMessagebox.CTkMessagebox(title="SUCCESS", message="Profile updated.", icon="check")
 
     def fetch_users(self):
         cpf = self.users_tab.get_input()

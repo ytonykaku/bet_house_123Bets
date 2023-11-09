@@ -1,5 +1,6 @@
 import typing as t
 import datetime as dt
+import sqlite3 as sql3
 
 import customtkinter as ctk
 import CTkMessagebox
@@ -50,7 +51,7 @@ class PunterView(ctk.CTkFrame):
 
         self.punter_frame = Frames.PunterFrame(self, self.punter)
 
-        self.tabs = ctk.CTkTabview(self, width=500)
+        self.tabs = ctk.CTkTabview(self, width=500, command=self.on_tab_change)
 
         self.t1 = self.tabs.add("Deposit")
 
@@ -84,8 +85,14 @@ class PunterView(ctk.CTkFrame):
 
         self.bet_tab = Frames.SearchFrame(self.t5, keyword="Name", fetch_callback=self.fetch_bets)
 
+        self.t6 = self.tabs.add("Profile")
+
+        self.t6.grid_columnconfigure(0, weight=1)
+
+        self.profile_tab = Frames.ProfileFrame(self.t6, self.punter, confirm_callback=self.update_profile)
+
         self.logout_button = ctk.CTkButton(self, text="Logout", fg_color="red", command=self.on_logout_click)
-    
+
     def grid(self, **kwargs):
         super().grid(**kwargs)
         self.punter_frame.grid()
@@ -95,7 +102,40 @@ class PunterView(ctk.CTkFrame):
         self.transaction_tab.grid()
         self.fight_tab.grid()
         self.bet_tab.grid()
+        self.profile_tab.grid()
         self.logout_button.grid(pady=5)
+
+    def on_tab_change(self):
+        self.profile_tab.update()
+
+    def update_profile(self):
+        bkp_name = str(self.punter.name)
+        bkp_email = str(self.punter.email)
+
+        self.punter.name = self.profile_tab.name.get()
+        self.punter.email = self.profile_tab.email.get()
+
+        try:
+            if not self.punter.name:
+                raise Exception("Please, provide a name.")
+
+            if not self.punter.email:
+                raise Exception("Please, provide a email.")
+
+            self.controller.user.update(self.punter)
+            self.punter_frame.update()
+        except sql3.IntegrityError:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message="Email already in use.", icon="cancel")
+            self.punter.name = bkp_name
+            self.punter.email = bkp_email
+            return
+        except Exception as e:
+            CTkMessagebox.CTkMessagebox(title="ERROR", message=str(e), icon="cancel")
+            self.punter.name = bkp_name
+            self.punter.email = bkp_email
+            return
+
+        CTkMessagebox.CTkMessagebox(title="SUCCESS", message="Profile updated.", icon="check")
 
     def fetch_transactions(self):
         year = self.transaction_tab.get_input()

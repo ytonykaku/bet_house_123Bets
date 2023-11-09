@@ -66,12 +66,16 @@ class AdminFrame(ctk.CTkFrame):
 
     def __init__(self, master, admin: Admin, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
+        self.admin = admin
 
-        self.label = ctk.CTkLabel(self, text=f"Welcome, [ADMIN] {admin.name}!")
+        self.label = ctk.CTkLabel(self, text=f"Welcome, [ADMIN] {self.admin.name}!")
 
     def grid(self, **kwargs):
         super().grid(**kwargs)
         self.label.grid()
+
+    def update(self):
+        self.label.configure(text=f"Welcome, [ADMIN] {self.admin.name}!")
 
 class PunterFrame(ctk.CTkFrame):
 
@@ -86,7 +90,7 @@ class PunterFrame(ctk.CTkFrame):
         self.loss = ctk.CTkLabel(self, text=f"Loss: ${punter.loss}")
 
     def update(self):
-        
+        self.name.configure(text=f"Welcome, {self.punter.name}!")
         self.bonoros.configure(text=f"Bonoros: ${self.punter.wallet.value_available}")
         self.profit.configure(text=f"Profit: ${self.punter.profit}")
         self.loss.configure(text=f"Loss: ${self.punter.loss}")
@@ -97,6 +101,34 @@ class PunterFrame(ctk.CTkFrame):
         self.bonoros.grid()
         self.profit.grid()
         self.loss.grid()
+
+class ProfileFrame(ctk.CTkFrame):
+
+    def __init__(self, master, user: User, confirm_callback, **kwargs):
+        super().__init__(master, fg_color="transparent", **kwargs)
+
+        self.user = user
+
+        self.label_name = ctk.CTkLabel(self, text="Name")
+        self.name = ctk.CTkEntry(self)
+        self.label_email = ctk.CTkLabel(self, text="Email")
+        self.email = ctk.CTkEntry(self)
+        self.confirm_button = ctk.CTkButton(self, text="Confirm", command=confirm_callback)
+
+    def grid(self, **kwargs):
+        self.label_name.grid()
+        self.name.grid()
+        self.label_email.grid()
+        self.email.grid()
+        self.confirm_button.grid(pady=5)
+        super().grid(**kwargs)
+
+    def update(self):
+        self.name.delete(0, len(self.name.get()))
+        self.email.delete(0, len(self.email.get()))
+
+        self.name.insert(0, self.user.name)
+        self.email.insert(0, self.user.email)
 
 class FighterFrame(ctk.CTkFrame):
 

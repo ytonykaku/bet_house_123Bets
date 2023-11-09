@@ -14,7 +14,8 @@ class UserPersistence(object):
             operations=[ "insert",
                          "delete",
                          "fetch",
-                         "update-utype" ],
+                         "update-utype",
+                         "update" ],
             SQL_BASE_PATH=os.path.join("sql", "user")
         )
 
@@ -40,6 +41,9 @@ class UserPersistence(object):
 
     def delete(self, user: User):
         self.db_cursor.execute(self.queries["delete"], (user.cpf, ))
+
+    def update(self, user: User):
+        self.db_cursor.execute(self.queries["update"], (user.name, user.email, user.cpf))
 
     def update_utype(self, user: User):
         self.db_cursor.execute(self.queries["update-utype"], (user.utype, user.cpf))
