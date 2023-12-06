@@ -7,7 +7,7 @@ from models.Punter import Punter
 from models.Wallet import Wallet
 
 
-class PunterPersistence(object):
+class PunterDAO(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor

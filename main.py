@@ -14,16 +14,16 @@ from view.UserView import UserView
 from view.PunterView import PunterView
 from view.AdminView import AdminView
 
-from persistence.Persistence import Persistence
+from persistence.DAO import DAO
 
-from persistence.UserPersistence import UserPersistence
-from persistence.AdminPersistence import AdminPersistence
-from persistence.PunterPersistence import PunterPersistence
-from persistence.WalletPersistence import WalletPersistence
-from persistence.TransactionPersistence import TransactionPersistence
-from persistence.BetPersistence import BetPersistence
-from persistence.FightPersistence import FightPersistence
-from persistence.FighterPersistence import FighterPersistence
+from persistence.UserDAO import UserDAO
+from persistence.AdminDAO import AdminDAO
+from persistence.PunterDAO import PunterDAO
+from persistence.WalletDAO import WalletDAO
+from persistence.TransactionDAO import TransactionDAO
+from persistence.BetDAO import BetDAO
+from persistence.FightDAO import FightDAO
+from persistence.FighterDAO import FighterDAO
 
 from control.Controller import Controller
 
@@ -42,14 +42,14 @@ class App(object):
     def __init__(self):
         self.conn, self.cursor = self.create_db()
 
-        persistence = Persistence(user=UserPersistence(cursor=self.cursor),
-                                  punter=PunterPersistence(cursor=self.cursor),
-                                  wallet=WalletPersistence(cursor=self.cursor),
-                                  admin=AdminPersistence(cursor=self.cursor),
-                                  transaction=TransactionPersistence(cursor=self.cursor),
-                                  fighter=FighterPersistence(cursor=self.cursor),
-                                  fight=FightPersistence(cursor=self.cursor),
-                                  bet=BetPersistence(cursor=self.cursor))
+        persistence = DAO(user=UserDAO(cursor=self.cursor),
+                          punter=PunterDAO(cursor=self.cursor),
+                          wallet=WalletDAO(cursor=self.cursor),
+                          admin=AdminDAO(cursor=self.cursor),
+                          transaction=TransactionDAO(cursor=self.cursor),
+                          fighter=FighterDAO(cursor=self.cursor),
+                          fight=FightDAO(cursor=self.cursor),
+                          bet=BetDAO(cursor=self.cursor))
 
         self.controller = Controller(punter=PunterController(persistence=persistence),
                                      wallet=WalletController(persistence=persistence),

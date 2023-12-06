@@ -2,12 +2,12 @@ from models.User import User
 from models.Punter import Punter
 from models.Transaction import Transaction
 
-from persistence.Persistence import Persistence
+from persistence.DAO import DAO
 
 
 class PunterController(object):
 
-    def __init__(self, persistence: Persistence):
+    def __init__(self, persistence: DAO):
         self.persistence = persistence
 
     def get_from_user(self, user: User) -> Punter | None:

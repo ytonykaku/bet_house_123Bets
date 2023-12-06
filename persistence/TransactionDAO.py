@@ -8,7 +8,7 @@ from models.Wallet import Wallet
 from models.Transaction import Transaction
 
 
-class TransactionPersistence(object):
+class TransactionDAO(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor

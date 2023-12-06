@@ -1,4 +1,4 @@
-from persistence.Persistence import Persistence
+from persistence.DAO import DAO
 
 from models.Fight import Fight
 from models.Fighter import Fighter
@@ -6,7 +6,7 @@ from models.Fighter import Fighter
 
 class FightController(object):
 
-    def __init__(self, persistence: Persistence):
+    def __init__(self, persistence: DAO):
         self.persistence = persistence
 
     def create(self, f: Fight):

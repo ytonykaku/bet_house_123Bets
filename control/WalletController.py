@@ -1,9 +1,9 @@
 from models.Wallet import Wallet
 
-from persistence.Persistence import Persistence
+from persistence.DAO import DAO
 
 
 class WalletController(object):
 
-    def __init__(self, persistence: Persistence):
+    def __init__(self, persistence: DAO):
         self.persistence = persistence

@@ -6,7 +6,7 @@ from persistence import utils
 from models.Fight import Fight
 from models.Fighter import Fighter
 
-class FightPersistence(object):
+class FightDAO(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor

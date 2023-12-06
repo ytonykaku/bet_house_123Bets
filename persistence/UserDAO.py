@@ -5,7 +5,7 @@ from models.User import User
 from persistence import utils
 
 
-class UserPersistence(object):
+class UserDAO(object):
 
     def __init__(self, cursor: sql3.Cursor):
         self.db_cursor = cursor

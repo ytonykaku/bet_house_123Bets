@@ -1,10 +1,10 @@
 from models.User import User
-from persistence.Persistence import Persistence
+from persistence.DAO import DAO
 
 
 class UserController(object):
 
-    def __init__(self, persistence: Persistence):
+    def __init__(self, persistence: DAO):
         self.persistence = persistence
 
     def authenticate(self, login: str, password: str) -> User | None:

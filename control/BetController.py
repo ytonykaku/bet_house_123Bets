@@ -1,12 +1,12 @@
 from models.Bet import Bet
 from models.Punter import Punter
 
-from persistence.Persistence import Persistence
+from persistence.DAO import DAO
 
 
 class BetController(object):
 
-    def __init__(self, persistence: Persistence):
+    def __init__(self, persistence: DAO):
         self.persistence = persistence
 
     def create(self, p: Punter, b: Bet):
