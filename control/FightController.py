@@ -19,4 +19,4 @@ class FightController(object):
         self.persistence.fight.delete(fight)
 
     def declare_winner(self, fight: Fight, fighter: Fighter):
-        self.persistence.fight.declare_winner(fight, fighter)
+        self.persistence.fight.update(fight, fighter)

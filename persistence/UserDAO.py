@@ -22,7 +22,7 @@ class UserDAO(object):
         with open(os.path.join("sql", "user", "table.sql")) as f:
             cursor.executescript(f.read())
 
-    def insert(self, u: User):
+    def create(self, u: User):
         self.db_cursor.execute(
             self.queries["insert"],
             (u.name, u.login, u.password, u.cpf, u.email, u.utype)

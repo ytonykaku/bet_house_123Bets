@@ -39,6 +39,6 @@ class FightDAO(object):
     def delete(self, fight: Fight):
         self.db_cursor.execute(self.queries["delete"], (fight.name, ))
 
-    def declare_winner(self, fight: Fight, fighter: Fighter):
+    def update(self, fight: Fight, fighter: Fighter):
         self.db_cursor.execute(self.queries["declare-winner"], (fighter.name, fight.name))
 

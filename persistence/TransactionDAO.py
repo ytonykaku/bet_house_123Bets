@@ -22,7 +22,7 @@ class TransactionDAO(object):
         with open(os.path.join("sql", "transaction", "table.sql")) as f:
             cursor.executescript(f.read())
 
-    def insert(self, w: Wallet, t: Transaction):
+    def create(self, w: Wallet, t: Transaction):
         self.db_cursor.execute(
             self.queries["insert"],
             (w.cpf_owner, t.ttype, t.value, t.timestamp)

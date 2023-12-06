@@ -12,7 +12,7 @@ class UserController(object):
         return next(filter(lambda u: u.login == login and u.password == password, users), None)
 
     def register(self, u: User):
-        self.persistence.user.insert(u)
+        self.persistence.user.create(u)
 
     def update(self, u: User):
         self.persistence.user.update(u)
